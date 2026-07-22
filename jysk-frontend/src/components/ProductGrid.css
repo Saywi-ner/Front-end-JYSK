@@ -2,6 +2,9 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: var(--space-4);
+  /* Карти — по висоті вмісту, без розтягування рядка (інакше між рейтингом
+     і ціною утворюється порожнеча через margin-top:auto у футера). */
+  align-items: start;
 }
 
 .product-grid__empty {

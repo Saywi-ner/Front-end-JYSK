@@ -24,11 +24,15 @@
 
 .product-card__image-link,
 .product-card__image {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
 }
 
 .product-card__image {
+  /* Абсолютне позиціювання тримає медіа квадратною (aspect-ratio),
+     а cover кропає фото будь-яких пропорцій без спотворення. */
   object-fit: cover;
 }
 
@@ -108,6 +112,13 @@
   font-size: var(--fs-h3);
   font-weight: 700;
   line-height: 1.25;
+  /* Резервуємо рівно два рядки, щоб карти в ряду були однакової висоти
+     незалежно від довжини назви; довші назви обрізаються трьома крапками. */
+  min-height: 2.5em;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .product-card__title a:hover {
   color: var(--talo-primary);
