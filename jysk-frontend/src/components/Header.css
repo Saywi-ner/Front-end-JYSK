@@ -1,0 +1,137 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--talo-surface);
+  border-bottom: 1px solid var(--talo-border);
+}
+
+.header__inner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: var(--header-h);
+}
+
+.header__burger {
+  display: inline-flex;
+  color: var(--talo-ink);
+}
+
+.header__logo {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: var(--talo-primary);
+}
+
+/* ── Навігація ── */
+.header__nav {
+  display: none;
+  gap: var(--space-5);
+}
+
+.header__nav-link {
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  color: var(--talo-ink);
+  padding-block: var(--space-2);
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.header__nav-link:hover,
+.header__nav-link.active {
+  color: var(--talo-primary);
+  border-color: var(--talo-primary);
+}
+
+/* ── Пошук ── */
+.header__search {
+  position: relative;
+  display: none;
+  flex: 1;
+  max-width: 420px;
+}
+
+.header__search-icon {
+  position: absolute;
+  left: 0.9rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--talo-faint);
+  pointer-events: none;
+}
+
+.header__search-input {
+  width: 100%;
+  padding: 0.6rem 0.9rem 0.6rem 2.6rem;
+  background: var(--talo-bg);
+  border: 1.5px solid var(--talo-border);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-sm);
+  transition: border-color 0.15s ease;
+}
+.header__search-input:focus {
+  outline: none;
+  border-color: var(--talo-primary);
+}
+
+/* ── Дії ── */
+.header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-left: auto;
+}
+
+.header__icon-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+  color: var(--talo-ink);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.header__icon-btn:hover {
+  background: var(--talo-bg);
+  color: var(--talo-primary);
+}
+
+.header__user-name {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+
+/* ── Планшет+ ── */
+@media (min-width: 768px) {
+  .header__burger {
+    display: none;
+  }
+  .header__nav,
+  .header__search {
+    display: flex;
+  }
+  .header__nav {
+    align-items: center;
+  }
+}
+
+/* ── Мобільне випадне меню ── */
+@media (max-width: 767px) {
+  .header__nav--open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: var(--header-h);
+    background: var(--talo-surface);
+    border-bottom: 1px solid var(--talo-border);
+    padding: var(--space-4);
+    box-shadow: var(--shadow);
+  }
+  .header__user-name {
+    display: none;
+  }
+}

@@ -1,0 +1,79 @@
+.cat-admin {
+  margin-top: var(--space-8);
+  border: 1px dashed var(--talo-border-strong);
+  border-radius: var(--radius);
+  background: var(--talo-surface);
+}
+
+.cat-admin__summary {
+  padding: var(--space-3) var(--space-4);
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  color: var(--talo-muted);
+  cursor: pointer;
+}
+
+.cat-admin__body {
+  display: grid;
+  gap: var(--space-5);
+  padding: var(--space-4);
+  border-top: 1px solid var(--talo-border);
+}
+
+.cat-admin__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.cat-admin__item {
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--talo-border);
+}
+
+.cat-admin__view {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-size: var(--fs-sm);
+}
+
+.cat-admin__meta {
+  color: var(--talo-faint);
+  font-size: var(--fs-xs);
+}
+
+.cat-admin__actions {
+  display: inline-flex;
+  gap: var(--space-2);
+}
+
+.cat-admin__edit {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+.cat-admin__edit .field {
+  width: auto;
+  flex: 1;
+  min-width: 140px;
+}
+
+.cat-admin__create {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-width: 420px;
+}
+
+.cat-admin__create-title {
+  font-size: var(--fs-h3);
+}
+
+@media (min-width: 768px) {
+  .cat-admin__body {
+    grid-template-columns: 1.4fr 1fr;
+  }
+}

@@ -1,29 +1,29 @@
-// src/App.jsx — каркас приложения + маршруты.
-// Стилей намеренно нет: задача сейчас — показать данные с эндпоинтов.
+// src/App.jsx — каркас застосунку + маршрути.
 
-import { Routes, Route, Link, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
+import Layout from "./components/Layout";
+import HomePage from "./pages/HomePage";
 import CatalogPage from "./pages/CatalogPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
+import CategoriesPage from "./pages/CategoriesPage";
+import LoginPage from "./pages/LoginPage";
+import ProfilePage from "./pages/ProfilePage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
   return (
-    <>
-      <header>
-        <nav>
-          <Link to="/catalog">JYSK · Каталог</Link>
-        </nav>
-      </header>
-      <hr />
-
-      <main>
-        <Routes>
-          <Route path="/" element={<Navigate to="/catalog" replace />} />
-          <Route path="/catalog" element={<CatalogPage />} />
-          <Route path="/products/:id" element={<ProductDetailPage />} />
-          <Route path="*" element={<p>Страница не найдена</p>} />
-        </Routes>
-      </main>
-    </>
+    <Routes>
+      <Route element={<Layout />}>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/catalog" element={<CatalogPage />} />
+        <Route path="/search" element={<CatalogPage />} />
+        <Route path="/categories" element={<CategoriesPage />} />
+        <Route path="/products/:id" element={<ProductDetailPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Route>
+    </Routes>
   );
 }
 

@@ -1,0 +1,226 @@
+.detail__state {
+  padding: var(--space-8) 0;
+  color: var(--talo-muted);
+}
+
+/* ─── Хлібні крихти ─── */
+.detail__breadcrumbs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+  font-size: var(--fs-sm);
+  color: var(--talo-muted);
+}
+.detail__breadcrumbs a:hover {
+  color: var(--talo-primary);
+}
+.detail__breadcrumbs svg {
+  color: var(--talo-faint);
+}
+
+/* ─── Верх ─── */
+.detail__top {
+  display: grid;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.detail__info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.detail__badges {
+  display: flex;
+  gap: var(--space-2);
+}
+.detail__badge {
+  padding: 0.25rem 0.7rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: #fff;
+}
+.detail__badge--new { background: var(--talo-navy); }
+.detail__badge--sale { background: var(--talo-accent); }
+
+.detail__title {
+  font-size: var(--fs-h1);
+}
+
+.detail__prices {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+.detail__price {
+  font-size: 2rem;
+  font-weight: 800;
+}
+.detail__price--sale {
+  color: var(--talo-price);
+}
+.detail__old-price {
+  font-size: 1.15rem;
+  color: var(--talo-faint);
+  text-decoration: line-through;
+}
+
+.detail__stock {
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  color: var(--talo-primary);
+}
+.detail__stock--out {
+  color: var(--talo-price);
+}
+
+.detail__buy {
+  font-size: var(--fs-body);
+  padding-block: 0.9rem;
+}
+
+/* ─── Короткі характеристики ─── */
+.detail__specs {
+  display: grid;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--talo-border);
+}
+.detail__spec {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-4);
+  font-size: var(--fs-sm);
+  padding-block: var(--space-1);
+}
+.detail__spec dt {
+  color: var(--talo-muted);
+}
+.detail__spec dd {
+  font-weight: 600;
+  text-align: right;
+}
+.detail__specs--full {
+  border-top: none;
+  padding-top: 0;
+}
+
+/* ─── Вкладки ─── */
+.detail__tabs {
+  margin-top: var(--space-7);
+}
+.detail__tablist {
+  display: flex;
+  gap: var(--space-2);
+  border-bottom: 1px solid var(--talo-border);
+}
+.detail__tab {
+  padding: var(--space-3) var(--space-4);
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  color: var(--talo-muted);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+.detail__tab--active {
+  color: var(--talo-ink);
+  border-color: var(--talo-primary);
+}
+.detail__tabpanel {
+  padding-top: var(--space-4);
+}
+.detail__description {
+  max-width: 70ch;
+  color: var(--talo-ink);
+  line-height: 1.7;
+  white-space: pre-line;
+}
+
+/* ─── Відгуки ─── */
+.detail__section-title {
+  font-size: var(--fs-h2);
+  margin-bottom: var(--space-4);
+}
+.detail__muted {
+  color: var(--talo-muted);
+}
+.detail__link {
+  color: var(--talo-primary);
+  font-weight: 700;
+  text-decoration: underline;
+}
+.detail__error {
+  color: var(--talo-price);
+  font-size: var(--fs-sm);
+}
+
+.detail__review-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+.review {
+  padding: var(--space-4);
+  background: var(--talo-surface);
+  border: 1px solid var(--talo-border);
+  border-radius: var(--radius);
+}
+.review__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+.review__author {
+  font-weight: 700;
+}
+.review__text {
+  color: var(--talo-ink);
+  font-size: var(--fs-sm);
+  line-height: 1.6;
+}
+.review__date {
+  display: block;
+  margin-top: var(--space-2);
+  font-size: var(--fs-xs);
+  color: var(--talo-faint);
+}
+
+.review-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-width: 560px;
+  padding: var(--space-5);
+  background: var(--talo-surface);
+  border: 1px solid var(--talo-border);
+  border-radius: var(--radius);
+}
+.review-form__title {
+  font-size: var(--fs-h3);
+}
+.review-form__rating {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-sm);
+}
+.review-form__rating .field {
+  width: auto;
+}
+
+/* ─── Планшет+ ─── */
+@media (min-width: 900px) {
+  .detail__top {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-8);
+  }
+}

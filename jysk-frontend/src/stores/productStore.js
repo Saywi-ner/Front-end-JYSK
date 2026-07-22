@@ -1,80 +1,104 @@
 // src/stores/productStore.js
 // Один стор = один раздел API. Здесь — только товары.
 //
-// Реальный контракт бэкенда (на сегодня):
-//   GET  /products            -> массив [{ id, name, price, imageUrl }]   (?categoryId= — опционально)
-//   GET  /products/{id:guid}  -> { id, name, description, price, categoryName, images: string[] }
-//
-// POST/PUT/DELETE напарник ещё дописывает — методы ниже уже готовы под них,
-// но до появления эндпоинтов вернут ошибку (это норм, страница их пока не вызывает).
+// Контракт бэкенда (commit f44fb45):
+//   GET    /products?categoryId=&search=&minPrice=&maxPrice=&color=&material=&isNew=&onSale=&page=&pageSize=&sortBy=
+//          -> { items: [...], totalCount, page, pageSize, totalPages }
+//          item = { id(guid), name, price, oldPrice, articleNumber, brand, color, material,
+//                   dimensions, isNew, categoryId, categoryName, mainImageUrl, avgRating, reviewCount }
+//   GET    /products/{id} -> деталка + images[{id,imageUrl,isMain}] + variants[] + avgRating + reviewCount
+//   POST   /products      -> created (сырая сущность — после создания перезагружаем список)
+//   PUT    /products/{id} -> updated (сырая сущность)
+//   DELETE /products/{id} -> 204
 
 import { create } from "zustand";
 import api from "../api/axios";
 
-const useProductStore = create((set) => ({
+const useProductStore = create((set, get) => ({
   // ─── State ──────────────────────────────────────────────────────────────
   items:           [],
   selectedProduct: null,
+  homepage:        null, // { newArrivals[], onSale[], recommended[] }
+  totalCount:      0,
+  page:            1,
+  pageSize:        20,
+  totalPages:      0,
+  lastParams:      {},   // последние фильтры — чтобы перезагружать список после мутаций
   isLoading:       false,
+  isHomeLoading:   false,
   error:           null,
 
   // ─── Actions ────────────────────────────────────────────────────────────
 
-  // GET /products?categoryId=
+  // GET /products/homepage -> { newArrivals, onSale, recommended }
+  fetchHomepage: async () => {
+    set({ isHomeLoading: true, error: null });
+    try {
+      const { data } = await api.get("/products/homepage");
+      set({ homepage: data, isHomeLoading: false });
+    } catch {
+      set({ error: "Не удалось загрузить главную", isHomeLoading: false });
+    }
+  },
+
   fetchProducts: async (params = {}) => {
-    set({ isLoading: true, error: null });
+    set({ isLoading: true, error: null, lastParams: params });
     try {
       const { data } = await api.get("/products", { params });
-      // Бэк сейчас отдаёт чистый массив. Если позже сделают пагинацию
-      // ({ items, totalCount, ... }) — этот разбор переживёт оба варианта.
-      const items = Array.isArray(data) ? data : (data.items ?? []);
-      set({ items, isLoading: false });
-    } catch (err) {
+      set({
+        items:      data.items,
+        totalCount: data.totalCount,
+        page:       data.page,
+        pageSize:   data.pageSize,
+        totalPages: data.totalPages,
+        isLoading:  false,
+      });
+    } catch {
       set({ error: "Не удалось загрузить товары", isLoading: false });
     }
   },
 
-  // GET /products/:id
   fetchProductById: async (id) => {
     set({ isLoading: true, error: null, selectedProduct: null });
     try {
       const { data } = await api.get(`/products/${id}`);
       set({ selectedProduct: data, isLoading: false });
-    } catch (err) {
+    } catch {
       set({ error: "Товар не найден", isLoading: false });
     }
   },
 
-  // POST /products  (Admin) — появится, когда напарник доделает эндпоинт
+  // POST возвращает сырую сущность без categoryName/mainImageUrl,
+  // поэтому после мутаций просто перезагружаем список с текущими фильтрами.
   createProduct: async (productData) => {
     set({ isLoading: true, error: null });
     try {
-      const { data } = await api.post("/products", productData);
-      set((state) => ({ items: [data, ...state.items], isLoading: false }));
+      await api.post("/products", productData);
+      await get().fetchProducts(get().lastParams);
       return true;
-    } catch (err) {
+    } catch {
       set({ error: "Ошибка создания товара", isLoading: false });
       return false;
     }
   },
 
-  // PUT /products/:id  (Admin)
   updateProduct: async (id, productData) => {
     set({ isLoading: true, error: null });
     try {
-      const { data } = await api.put(`/products/${id}`, productData);
-      set((state) => ({
-        items:     state.items.map((p) => (p.id === id ? data : p)),
-        isLoading: false,
-      }));
+      await api.put(`/products/${id}`, productData);
+      // если открыта деталка этого товара — обновим её
+      if (get().selectedProduct?.id === id) {
+        await get().fetchProductById(id);
+      } else {
+        set({ isLoading: false });
+      }
       return true;
-    } catch (err) {
+    } catch {
       set({ error: "Ошибка обновления товара", isLoading: false });
       return false;
     }
   },
 
-  // DELETE /products/:id  (Admin)
   deleteProduct: async (id) => {
     set({ isLoading: true, error: null });
     try {
@@ -84,7 +108,7 @@ const useProductStore = create((set) => ({
         isLoading: false,
       }));
       return true;
-    } catch (err) {
+    } catch {
       set({ error: "Ошибка удаления товара", isLoading: false });
       return false;
     }

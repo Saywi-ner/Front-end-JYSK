@@ -1,0 +1,20 @@
+.not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-4);
+  padding-block: var(--space-8);
+}
+
+.not-found__code {
+  font-size: clamp(4rem, 15vw, 8rem);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--talo-primary);
+}
+
+.not-found__text {
+  max-width: 40ch;
+  color: var(--talo-muted);
+}

@@ -1,0 +1,46 @@
+.admin-form {
+  margin-top: var(--space-7);
+  border: 1px dashed var(--talo-border-strong);
+  border-radius: var(--radius);
+  background: var(--talo-surface);
+}
+
+.admin-form__summary {
+  padding: var(--space-3) var(--space-4);
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  color: var(--talo-muted);
+  cursor: pointer;
+}
+
+.admin-form__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  border-top: 1px solid var(--talo-border);
+}
+
+.admin-form__row {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: 1fr;
+}
+
+.admin-form__check {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-sm);
+}
+
+.admin-form__error {
+  color: var(--talo-price);
+  font-size: var(--fs-sm);
+}
+
+@media (min-width: 640px) {
+  .admin-form__row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

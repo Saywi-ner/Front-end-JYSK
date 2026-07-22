@@ -1,44 +1,234 @@
 // src/pages/CatalogPage.jsx
-// Каталог: тянет список товаров через стор и рендерит карточки.
-// Запрос идёт в компоненте через метод стора, а не напрямую через axios.
+// Каталог / результати пошуку: фільтри + сітка + пагінація.
+// Фільтри синхронізовані з URL (?search=&categoryId=&onSale=&isNew=&sort=).
+// Усі запити — через методи сторів, не напряму axios.
 
 import { useEffect, useState } from "react";
+import { useSearchParams, useLocation } from "react-router-dom";
 import useProductStore from "../stores/productStore";
-import ProductCard from "../components/ProductCard";
+import useCategoryStore from "../stores/categoryStore";
+import ProductGrid from "../components/ProductGrid";
+import { ChevronLeft, ChevronRight } from "../components/icons";
+import ProductAdminForm from "../components/ProductAdminForm";
+import "./CatalogPage.css";
+
+const SORT_OPTIONS = [
+  { value: "", label: "За замовчуванням" },
+  { value: "price_asc", label: "Спочатку дешевші" },
+  { value: "price_desc", label: "Спочатку дорожчі" },
+  { value: "newest", label: "Новинки" },
+  { value: "rating", label: "За рейтингом" },
+];
+
+const PAGE_SIZE = 12;
 
 const CatalogPage = () => {
-  const { items, isLoading, error, fetchProducts } = useProductStore();
-  const [categoryId, setCategoryId] = useState("");
+  const location = useLocation();
+  const isSearch = location.pathname === "/search";
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const { items, totalCount, page, totalPages, isLoading, error,
+          fetchProducts, deleteProduct } = useProductStore();
+  const { categories, fetchCategories } = useCategoryStore();
+
+  // Локальні стани цінового діапазону (щоб не смикати URL на кожну цифру).
+  const [minPrice, setMinPrice] = useState(searchParams.get("minPrice") ?? "");
+  const [maxPrice, setMaxPrice] = useState(searchParams.get("maxPrice") ?? "");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const search = searchParams.get("search") ?? "";
+  const categoryId = searchParams.get("categoryId") ?? "";
+  const onSale = searchParams.get("onSale") === "1";
+  const isNew = searchParams.get("isNew") === "1";
+  const sortBy = searchParams.get("sort") ?? "";
 
   useEffect(() => {
-    // Пустой categoryId => грузим все товары. С числом => фильтр по категории.
-    const params = categoryId ? { categoryId: Number(categoryId) } : {};
+    fetchCategories();
+  }, [fetchCategories]);
+
+  useEffect(() => {
+    const params = { page: currentPage, pageSize: PAGE_SIZE };
+    if (search) params.search = search;
+    if (categoryId) params.categoryId = Number(categoryId);
+    if (onSale) params.onSale = true;
+    if (isNew) params.isNew = true;
+    if (sortBy) params.sortBy = sortBy;
+    if (searchParams.get("minPrice")) params.minPrice = Number(searchParams.get("minPrice"));
+    if (searchParams.get("maxPrice")) params.maxPrice = Number(searchParams.get("maxPrice"));
     fetchProducts(params);
-  }, [categoryId, fetchProducts]);
+  }, [search, categoryId, onSale, isNew, sortBy, currentPage, searchParams, fetchProducts]);
+
+  // Оновлення одного параметра URL (скидаючи порожні). Зміна фільтра завжди
+  // повертає на першу сторінку.
+  const patchParams = (patch) => {
+    const next = new URLSearchParams(searchParams);
+    Object.entries(patch).forEach(([k, v]) => {
+      if (v === "" || v == null || v === false) next.delete(k);
+      else next.set(k, v === true ? "1" : String(v));
+    });
+    setCurrentPage(1);
+    setSearchParams(next);
+  };
+
+  const applyPrice = (e) => {
+    e.preventDefault();
+    patchParams({ minPrice, maxPrice });
+  };
+
+  const resetFilters = () => {
+    setMinPrice("");
+    setMaxPrice("");
+    setCurrentPage(1);
+    setSearchParams(new URLSearchParams());
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm("Видалити товар?")) await deleteProduct(id);
+  };
+
+  const activeCategory = categories.find((c) => String(c.id) === categoryId);
+  const heading = isSearch
+    ? `Результати пошуку${search ? `: «${search}»` : ""}`
+    : activeCategory
+      ? activeCategory.name
+      : onSale
+        ? "Акції"
+        : isNew
+          ? "Новинки"
+          : "Каталог товарів";
 
   return (
-    <div>
-      <h1>Каталог товаров</h1>
+    <div className="container catalog">
+      <header className="catalog__head">
+        <h1 className="catalog__title">{heading}</h1>
+        <p className="catalog__count">Знайдено товарів: {totalCount}</p>
+      </header>
 
-      <label>
-        Фильтр по категории (id):{" "}
-        <input
-          type="number"
-          min="1"
-          placeholder="все"
-          value={categoryId}
-          onChange={(e) => setCategoryId(e.target.value)}
-        />
-      </label>
+      <div className="catalog__layout">
+        {/* ─── Фільтри ─── */}
+        <aside className="catalog__filters" aria-label="Фільтри">
+          <div className="filters">
+            <div className="filters__group">
+              <h2 className="filters__title">Категорії</h2>
+              <ul className="filters__list">
+                <li>
+                  <button
+                    type="button"
+                    className={"filters__cat" + (!categoryId ? " filters__cat--active" : "")}
+                    onClick={() => patchParams({ categoryId: "" })}
+                  >
+                    Усі категорії
+                  </button>
+                </li>
+                {categories.filter((c) => !c.parentCategoryId).map((c) => (
+                  <li key={c.id}>
+                    <button
+                      type="button"
+                      className={
+                        "filters__cat" +
+                        (String(c.id) === categoryId ? " filters__cat--active" : "")
+                      }
+                      onClick={() => patchParams({ categoryId: c.id })}
+                    >
+                      {c.name}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-      {isLoading && <p>Загрузка товаров…</p>}
-      {error && <p>Ошибка: {error}</p>}
-      {!isLoading && !error && items.length === 0 && <p>Товаров пока нет.</p>}
+            <form className="filters__group" onSubmit={applyPrice}>
+              <h2 className="filters__title">Ціна, грн</h2>
+              <div className="filters__price">
+                <input
+                  type="number" min="0" className="field" placeholder="від"
+                  value={minPrice} onChange={(e) => setMinPrice(e.target.value)}
+                  aria-label="Ціна від"
+                />
+                <span className="filters__dash">—</span>
+                <input
+                  type="number" min="0" className="field" placeholder="до"
+                  value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)}
+                  aria-label="Ціна до"
+                />
+              </div>
+              <button type="submit" className="btn btn--outline btn--block">Застосувати</button>
+            </form>
 
-      <div>
-        {items.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
+            <div className="filters__group">
+              <h2 className="filters__title">Позначки</h2>
+              <label className="filters__check">
+                <input
+                  type="checkbox" checked={isNew}
+                  onChange={(e) => patchParams({ isNew: e.target.checked })}
+                />
+                Тільки новинки
+              </label>
+              <label className="filters__check">
+                <input
+                  type="checkbox" checked={onSale}
+                  onChange={(e) => patchParams({ onSale: e.target.checked })}
+                />
+                Зі знижкою
+              </label>
+            </div>
+
+            <button type="button" className="filters__reset" onClick={resetFilters}>
+              Скинути фільтри
+            </button>
+          </div>
+        </aside>
+
+        {/* ─── Результати ─── */}
+        <div className="catalog__results">
+          <div className="catalog__toolbar">
+            <label className="catalog__sort">
+              <span>Сортувати:</span>
+              <select
+                className="field"
+                value={sortBy}
+                onChange={(e) => patchParams({ sort: e.target.value })}
+              >
+                {SORT_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>{o.label}</option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          {error && <p className="catalog__error">Помилка: {error}</p>}
+          {isLoading && <p className="catalog__loading">Завантаження товарів…</p>}
+
+          {!isLoading && (
+            <ProductGrid
+              products={items}
+              onDelete={handleDelete}
+              empty="За вашим запитом нічого не знайдено."
+            />
+          )}
+
+          {totalPages > 1 && (
+            <nav className="pagination" aria-label="Сторінки">
+              <button
+                type="button" className="pagination__btn"
+                disabled={page <= 1}
+                onClick={() => setCurrentPage(page - 1)}
+              >
+                <ChevronLeft width={18} height={18} /> Назад
+              </button>
+              <span className="pagination__info">Сторінка {page} з {totalPages}</span>
+              <button
+                type="button" className="pagination__btn"
+                disabled={page >= totalPages}
+                onClick={() => setCurrentPage(page + 1)}
+              >
+                Далі <ChevronRight width={18} height={18} />
+              </button>
+            </nav>
+          )}
+
+          <ProductAdminForm categories={categories} />
+        </div>
       </div>
     </div>
   );

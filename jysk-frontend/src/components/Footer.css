@@ -1,0 +1,112 @@
+.footer {
+  flex-shrink: 0;
+  margin-top: var(--space-8);
+  background: var(--talo-surface);
+  border-top: 1px solid var(--talo-border);
+}
+
+.footer__inner {
+  display: grid;
+  gap: var(--space-6);
+  padding-block: var(--space-7);
+}
+
+.footer__logo {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  color: var(--talo-primary);
+}
+
+.footer__tagline {
+  margin-top: var(--space-3);
+  max-width: 28ch;
+  color: var(--talo-muted);
+  font-size: var(--fs-sm);
+}
+
+.footer__phone {
+  display: inline-block;
+  margin-top: var(--space-4);
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.footer__hours {
+  color: var(--talo-muted);
+  font-size: var(--fs-sm);
+}
+
+.footer__columns {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-5);
+}
+
+.footer__col-title {
+  font-size: var(--fs-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-3);
+}
+
+.footer__links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.footer__link {
+  color: var(--talo-muted);
+  font-size: var(--fs-sm);
+  transition: color 0.15s ease;
+}
+.footer__link:hover {
+  color: var(--talo-primary);
+}
+
+/* ── Нижня смуга ── */
+.footer__bar {
+  border-top: 1px solid var(--talo-border);
+}
+
+.footer__bar-inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  align-items: center;
+  padding-block: var(--space-4);
+}
+
+.footer__copy {
+  color: var(--talo-faint);
+  font-size: var(--fs-xs);
+}
+
+.footer__pay {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.footer__pay-item {
+  padding: 0.25rem 0.5rem;
+  background: var(--talo-bg);
+  border: 1px solid var(--talo-border);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--talo-muted);
+}
+
+@media (min-width: 768px) {
+  .footer__inner {
+    grid-template-columns: 1.2fr 2fr;
+  }
+  .footer__columns {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .footer__bar-inner {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}

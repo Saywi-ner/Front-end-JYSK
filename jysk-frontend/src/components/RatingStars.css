@@ -1,0 +1,21 @@
+.rating {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.rating__stars {
+  display: inline-flex;
+  gap: 1px;
+  color: var(--talo-border-strong);
+}
+
+.rating__star--on {
+  color: var(--talo-star);
+}
+
+.rating__count {
+  font-size: var(--fs-xs);
+  color: var(--talo-muted);
+  font-weight: 600;
+}

@@ -1,0 +1,158 @@
+.catalog__head {
+  margin-bottom: var(--space-5);
+}
+
+.catalog__title {
+  font-size: var(--fs-h1);
+}
+
+.catalog__count {
+  margin-top: var(--space-2);
+  color: var(--talo-muted);
+  font-size: var(--fs-sm);
+}
+
+.catalog__layout {
+  display: grid;
+  gap: var(--space-5);
+  align-items: start;
+}
+
+/* ─── Фільтри ─── */
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-5);
+  background: var(--talo-surface);
+  border: 1px solid var(--talo-border);
+  border-radius: var(--radius);
+}
+
+.filters__title {
+  font-size: var(--fs-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-3);
+  color: var(--talo-muted);
+}
+
+.filters__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.filters__cat {
+  width: 100%;
+  text-align: left;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-sm);
+  color: var(--talo-ink);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.filters__cat:hover {
+  background: var(--talo-bg);
+}
+.filters__cat--active {
+  background: var(--talo-primary-soft);
+  color: var(--talo-primary-dark);
+  font-weight: 700;
+}
+
+.filters__price {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+.filters__dash {
+  color: var(--talo-faint);
+}
+
+.filters__check {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-sm);
+  padding-block: var(--space-1);
+}
+
+.filters__reset {
+  align-self: flex-start;
+  font-size: var(--fs-sm);
+  color: var(--talo-accent-dark);
+  text-decoration: underline;
+}
+
+/* ─── Результати ─── */
+.catalog__toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--space-4);
+}
+
+.catalog__sort {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-sm);
+  color: var(--talo-muted);
+}
+.catalog__sort .field {
+  width: auto;
+}
+
+.catalog__loading,
+.catalog__error {
+  padding: var(--space-5) 0;
+  color: var(--talo-muted);
+}
+.catalog__error {
+  color: var(--talo-price);
+}
+
+/* ─── Пагінація ─── */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+}
+
+.pagination__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0.55rem 1rem;
+  border: 1.5px solid var(--talo-border-strong);
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.pagination__btn:hover:not(:disabled) {
+  border-color: var(--talo-primary);
+}
+.pagination__btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pagination__info {
+  font-size: var(--fs-sm);
+  color: var(--talo-muted);
+}
+
+/* ─── Планшет+ : сайдбар зліва ─── */
+@media (min-width: 900px) {
+  .catalog__layout {
+    grid-template-columns: 260px 1fr;
+  }
+  .catalog__filters {
+    position: sticky;
+    top: calc(var(--header-h) + var(--space-4));
+  }
+}
