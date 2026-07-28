@@ -2,6 +2,20 @@
   position: sticky;
   top: 0;
   z-index: 50;
+}
+
+/* Смуга-оголошення над шапкою (є і в мобільному, і в десктопному макеті). */
+.header__promo {
+  padding: 0.35rem var(--space-4);
+  background: var(--talo-accent);
+  color: #fff;
+  text-align: center;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.header__bar {
   background: var(--talo-surface);
   border-bottom: 1px solid var(--talo-border);
 }
@@ -9,16 +23,17 @@
 .header__inner {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-3);
   min-height: var(--header-h);
 }
 
 .header__burger {
   display: inline-flex;
-  color: var(--talo-ink);
+  color: inherit;
 }
 
 .header__logo {
+  font-family: var(--font-display);
   font-size: 1.6rem;
   font-weight: 800;
   letter-spacing: 0.18em;
@@ -45,26 +60,20 @@
   border-color: var(--talo-primary);
 }
 
-/* ── Пошук ── */
+/* ── Пошук ──
+   На відміну від попередньої версії, поле видно й на телефоні: у макеті
+   воно стоїть просто в шапці, та й шукати товар з телефона було неможливо. */
 .header__search {
   position: relative;
-  display: none;
+  display: flex;
   flex: 1;
+  min-width: 0;
   max-width: 420px;
-}
-
-.header__search-icon {
-  position: absolute;
-  left: 0.9rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--talo-faint);
-  pointer-events: none;
 }
 
 .header__search-input {
   width: 100%;
-  padding: 0.6rem 0.9rem 0.6rem 2.6rem;
+  padding: 0.55rem 2.6rem 0.55rem 1rem;
   background: var(--talo-bg);
   border: 1.5px solid var(--talo-border);
   border-radius: var(--radius-pill);
@@ -74,6 +83,23 @@
 .header__search-input:focus {
   outline: none;
   border-color: var(--talo-primary);
+}
+
+.header__search-btn {
+  position: absolute;
+  right: 0.35rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: var(--talo-muted);
+  transition: color 0.15s ease;
+}
+.header__search-btn:hover {
+  color: var(--talo-primary);
 }
 
 /* ── Дії ── */
@@ -90,7 +116,7 @@
   gap: var(--space-2);
   padding: var(--space-2);
   border-radius: var(--radius-sm);
-  color: var(--talo-ink);
+  color: inherit;
   transition: background 0.15s ease, color 0.15s ease;
 }
 .header__icon-btn:hover {
@@ -108,30 +134,105 @@
   .header__burger {
     display: none;
   }
-  .header__nav,
-  .header__search {
-    display: flex;
-  }
   .header__nav {
+    display: flex;
     align-items: center;
   }
 }
 
-/* ── Мобільне випадне меню ── */
+/* ── Мобільна шапка за макетом ──
+   Темно-зелена смуга: бургер, біле лого, поле пошуку та кошик. */
 @media (max-width: 767px) {
-  .header__nav--open {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: var(--header-h);
-    background: var(--talo-surface);
-    border-bottom: 1px solid var(--talo-border);
-    padding: var(--space-4);
-    box-shadow: var(--shadow);
+  .header__bar {
+    background: var(--talo-primary);
+    border-bottom: none;
+    color: #fff;
   }
-  .header__user-name {
+
+  .header__inner {
+    gap: var(--space-2);
+    min-height: 56px;
+  }
+
+  .header__logo {
+    font-size: 1.25rem;
+    letter-spacing: 0.14em;
+    color: #fff;
+  }
+
+  .header__search-input {
+    background: var(--talo-surface);
+    border-color: transparent;
+    padding-block: 0.45rem;
+  }
+
+  /* Обране й профіль живуть у висувному меню, щоб смуга не переповнювалась. */
+  .header__icon-btn--desktop {
+    display: none;
+  }
+
+  .header__icon-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+  }
+
+  .header__actions {
+    gap: 0;
+  }
+}
+
+/* ── Висувне меню ── */
+.header__overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(42, 38, 33, 0.45);
+  border: 0;
+}
+
+.header__drawer {
+  position: fixed;
+  z-index: 61;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: min(80vw, 320px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-6) var(--space-4);
+  background: var(--talo-surface);
+  box-shadow: var(--shadow-lg);
+  overflow-y: auto;
+}
+
+.header__drawer-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--fs-body);
+  font-weight: 600;
+  color: var(--talo-ink);
+  text-align: left;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.header__drawer-link:hover,
+.header__drawer-link.active {
+  background: var(--talo-primary-soft);
+  color: var(--talo-primary);
+}
+
+.header__drawer-sep {
+  margin: var(--space-3) 0;
+  border: 0;
+  border-top: 1px solid var(--talo-border);
+}
+
+@media (min-width: 768px) {
+  .header__overlay,
+  .header__drawer {
     display: none;
   }
 }
