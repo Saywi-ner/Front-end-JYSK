@@ -1,7 +1,9 @@
 // src/components/ProductCard.jsx
-// Картка товару для сіток каталогу/головної.
-// Поля з GET /products: { id, name, price, oldPrice, isNew, categoryName,
-//                         mainImageUrl|imageUrl, avgRating, reviewCount, ... }
+// Картка товару за макетом TALO (Figma): медіа з круглим бейджем і сердечком,
+// назва, короткий опис, рейтинг, стара/нова ціна та кругла кнопка кошика.
+//
+// Поля з GET /products: { id, name, description, price, oldPrice, isNew,
+//   categoryName, imageUrl|mainImageUrl, avgRating, reviewCount, ... }
 
 import { Link } from "react-router-dom";
 import RatingStars from "./RatingStars";
@@ -12,6 +14,7 @@ import "./ProductCard.css";
 const ProductCard = ({ product, onDelete, onAddToCart, onToggleWish, wished }) => {
   const img = productImage(product);
   const discount = discountPercent(product.price, product.oldPrice);
+  const hasDiscount = Boolean(discount);
 
   return (
     <article className="product-card">
@@ -33,12 +36,15 @@ const ProductCard = ({ product, onDelete, onAddToCart, onToggleWish, wished }) =
           )}
         </Link>
 
+        {/* Бейджі — круглі, у лівому верхньому куті (як у макеті). */}
         <div className="product-card__badges">
-          {product.isNew && (
-            <span className="product-card__badge product-card__badge--new">Новинка</span>
+          {hasDiscount && (
+            <span className="product-card__badge product-card__badge--sale">
+              {discount}
+            </span>
           )}
-          {discount && (
-            <span className="product-card__badge product-card__badge--sale">{discount}</span>
+          {product.isNew && (
+            <span className="product-card__badge product-card__badge--new">NEW</span>
           )}
         </div>
 
@@ -51,29 +57,31 @@ const ProductCard = ({ product, onDelete, onAddToCart, onToggleWish, wished }) =
           aria-label="До обраного"
           onClick={() => onToggleWish?.(product)}
         >
-          <HeartIcon filled={wished} width={18} height={18} />
+          <HeartIcon filled={wished} width={20} height={20} />
         </button>
       </div>
 
       <div className="product-card__body">
-        {product.categoryName && (
-          <span className="product-card__category">{product.categoryName}</span>
-        )}
         <h3 className="product-card__title">
           <Link to={`/products/${product.id}`}>{product.name}</Link>
         </h3>
 
-        <RatingStars rating={product.avgRating} count={product.reviewCount} size={15} />
+        {/* Опис і рядок старої ціни рендеримо завжди — навіть порожніми.
+            Інакше картки без опису чи без знижки виходять нижчими за сусідні
+            й ряд у сітці «розсипається» по висоті. */}
+        <p className="product-card__desc">{product.description}</p>
+
+        <RatingStars rating={product.avgRating} count={product.reviewCount} size={14} />
 
         <div className="product-card__footer">
           <div className="product-card__prices">
-            {product.oldPrice > product.price && (
-              <span className="product-card__old-price">{formatPrice(product.oldPrice)}</span>
-            )}
+            <span className="product-card__old-price" aria-hidden={!hasDiscount}>
+              {hasDiscount ? formatPrice(product.oldPrice) : " "}
+            </span>
             <span
               className={
                 "product-card__price" +
-                (product.oldPrice > product.price ? " product-card__price--sale" : "")
+                (hasDiscount ? " product-card__price--sale" : "")
               }
             >
               {formatPrice(product.price)}
@@ -83,7 +91,7 @@ const ProductCard = ({ product, onDelete, onAddToCart, onToggleWish, wished }) =
           <button
             type="button"
             className="product-card__cart"
-            aria-label="Додати в кошик"
+            aria-label={`Додати «${product.name}» в кошик`}
             onClick={() => onAddToCart?.(product)}
           >
             <CartIcon width={20} height={20} />

@@ -1,25 +1,25 @@
+/* Картка товару — за макетом TALO (Figma).
+   Біла картка на кремовому тлі, кругла кнопка кошика, акцентна ціна. */
+
 .product-card {
   display: flex;
   flex-direction: column;
   background: var(--talo-surface);
-  border: 1px solid var(--talo-border);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  transition: box-shadow 0.18s ease, transform 0.18s ease,
-    border-color 0.18s ease;
+  transition: box-shadow 0.18s ease, transform 0.18s ease;
 }
 
 .product-card:hover {
   box-shadow: var(--shadow);
   transform: translateY(-3px);
-  border-color: var(--talo-border-strong);
 }
 
 /* ── Медіа ── */
 .product-card__media {
   position: relative;
   aspect-ratio: 1 / 1;
-  background: var(--talo-surface-2);
+  background: var(--talo-surface);
 }
 
 .product-card__image-link,
@@ -47,6 +47,7 @@
   letter-spacing: 0.2em;
 }
 
+/* Бейджі: круглі, у лівому верхньому куті. */
 .product-card__badges {
   position: absolute;
   top: var(--space-3);
@@ -54,38 +55,46 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+  z-index: 1;
 }
 
 .product-card__badge {
-  padding: 0.25rem 0.6rem;
+  display: grid;
+  place-items: center;
+  min-width: 42px;
+  height: 42px;
+  padding: 0 0.4rem;
   border-radius: var(--radius-pill);
   font-size: var(--fs-xs);
   font-weight: 700;
+  line-height: 1;
   color: #fff;
-}
-.product-card__badge--new {
-  background: var(--talo-navy);
 }
 .product-card__badge--sale {
   background: var(--talo-accent);
 }
+.product-card__badge--new {
+  background: var(--talo-navy);
+}
 
+/* Сердечко — у правому нижньому куті фото (як у макеті). */
 .product-card__wish {
   position: absolute;
-  top: var(--space-3);
   right: var(--space-3);
+  bottom: var(--space-3);
+  z-index: 1;
   width: 36px;
   height: 36px;
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.9);
+  background: transparent;
   color: var(--talo-ink);
-  box-shadow: var(--shadow-sm);
   transition: color 0.15s ease, background 0.15s ease;
 }
 .product-card__wish:hover {
-  background: #fff;
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--talo-accent);
 }
 .product-card__wish--active {
   color: var(--talo-accent);
@@ -100,20 +109,12 @@
   flex: 1 0 auto;
 }
 
-.product-card__category {
-  font-size: var(--fs-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--talo-faint);
-  font-weight: 600;
-}
-
 .product-card__title {
+  font-family: var(--font-display);
   font-size: var(--fs-h3);
   font-weight: 700;
   line-height: 1.25;
-  /* Резервуємо рівно два рядки, щоб карти в ряду були однакової висоти
-     незалежно від довжини назви; довші назви обрізаються трьома крапками. */
+  /* Два рядки під назву, щоб картки в ряду були однакової висоти. */
   min-height: 2.5em;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -122,6 +123,18 @@
 }
 .product-card__title a:hover {
   color: var(--talo-primary);
+}
+
+/* Короткий опис — рівно три рядки, як у макеті. */
+.product-card__desc {
+  font-size: var(--fs-sm);
+  line-height: 1.45;
+  color: var(--talo-muted);
+  min-height: calc(3 * 1.45em);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .product-card__footer {
@@ -137,17 +150,25 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  /* Ціна не переноситься: «18 900 грн» інакше ламається на два рядки
+     й картка стає вищою за сусідні в ряду. */
+  white-space: nowrap;
 }
 
 .product-card__old-price {
-  font-size: var(--fs-xs);
+  font-size: var(--fs-sm);
   color: var(--talo-faint);
   text-decoration: line-through;
+  /* Тримає рядок навіть коли знижки немає і текст порожній,
+     щоб низ картки збігався із сусідніми у ряду. */
+  min-height: 1.3em;
 }
 
 .product-card__price {
-  font-size: 1.25rem;
-  font-weight: 800;
+  font-family: var(--font-display);
+  font-size: 1.375rem;
+  font-weight: 700;
+  line-height: 1.1;
 }
 .product-card__price--sale {
   color: var(--talo-price);
@@ -181,4 +202,36 @@
 }
 .product-card__delete:hover {
   background: #fbeee9;
+}
+
+/* ── Мобільна версія ──
+   На вузьких екранах картка щільніша: менші відступи, дрібніші кегль
+   і кнопки, опис ховаємо — у мобільному макеті його немає. */
+@media (max-width: 639px) {
+  .product-card__body {
+    padding: var(--space-3);
+    gap: var(--space-1);
+  }
+
+  .product-card__desc {
+    display: none;
+  }
+
+  .product-card__title {
+    font-size: var(--fs-body);
+  }
+
+  .product-card__price {
+    font-size: 1.125rem;
+  }
+
+  .product-card__badge {
+    min-width: 34px;
+    height: 34px;
+  }
+
+  .product-card__cart {
+    width: 38px;
+    height: 38px;
+  }
 }

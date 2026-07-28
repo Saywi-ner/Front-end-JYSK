@@ -4,6 +4,52 @@
    Методологія: БЕМ. Підхід: Mobile First.
    ============================================================ */
 
+/* ─── Шрифт макета: Fixel (MacPaw, OFL) ───────────────────────
+   Text — інтерфейс і дрібний кегль, Display — великі заголовки.
+   swap: текст видно одразу системним шрифтом, без «миготіння» пустотою. */
+@font-face {
+  font-family: "Fixel";
+  src: url("./assets/fonts/FixelText-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Fixel";
+  src: url("./assets/fonts/FixelText-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Fixel";
+  src: url("./assets/fonts/FixelText-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Fixel";
+  src: url("./assets/fonts/FixelText-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Fixel Display";
+  src: url("./assets/fonts/FixelDisplay-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Fixel Display";
+  src: url("./assets/fonts/FixelDisplay-ExtraBold.woff2") format("woff2");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   /* ─── Кольори ───────────────────────────────────────────── */
   --talo-bg: #f6f1e9;            /* тепле кремове тло сторінки */
@@ -14,8 +60,8 @@
   --talo-muted: #857c6d;        /* другорядний текст */
   --talo-faint: #b3a996;        /* підписи, плейсхолдери */
 
-  --talo-primary: #4c6444;      /* зелений — головні дії, кнопка кошика */
-  --talo-primary-dark: #3a4e33;
+  --talo-primary: #3c522c;      /* зелений з макета (стиль «Green») */
+  --talo-primary-dark: #2f4122;
   --talo-primary-soft: #e6ede1;
 
   --talo-accent: #c15b3c;       /* теракота — акценти, знижки */
@@ -29,7 +75,8 @@
   --talo-border-strong: #d7cbb6;
 
   /* ─── Типографіка ───────────────────────────────────────── */
-  --font-sans: "Manrope", system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-sans: "Fixel", system-ui, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Fixel Display", "Fixel", system-ui, sans-serif;
 
   --fs-hero: clamp(2rem, 5vw, 3.5rem);
   --fs-h1: clamp(1.75rem, 4vw, 2.75rem);
