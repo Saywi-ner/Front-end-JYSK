@@ -24,6 +24,8 @@
 }
 
 .hero__title {
+  font-family: var(--font-display);
+  font-weight: 800;
   font-size: var(--fs-hero);
   margin-top: var(--space-3);
   max-width: 16ch;
@@ -46,17 +48,12 @@
   display: none;
   aspect-ratio: 4 / 3;
   border-radius: var(--radius);
-  background:
-    radial-gradient(circle at 70% 30%, #d9cdb6, transparent 60%),
-    linear-gradient(160deg, #cdbfa4, #b9a888);
-  place-items: center;
+  overflow: hidden;
 }
-
-.hero__media-label {
-  font-size: 3rem;
-  font-weight: 800;
-  letter-spacing: 0.3em;
-  color: rgba(255, 255, 255, 0.7);
+.hero__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 @media (min-width: 900px) {
@@ -65,90 +62,169 @@
     padding: var(--space-8);
   }
   .hero__media {
-    display: grid;
+    display: block;
   }
 }
 
-/* ─── Категорії ─── */
-.home-cats {
+/* ─── Пошук по кімнатах ───
+   Картка кімнати: фото зверху, назва на світлій підкладці знизу. */
+.rooms {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-4);
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
 }
 
-.home-cat {
+.room {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: var(--space-3);
-  text-align: center;
+  height: 100%;
+  background: var(--talo-surface);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.room:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow);
 }
 
-.home-cat__circle {
+.room__media {
   display: grid;
   place-items: center;
-  width: clamp(64px, 18vw, 104px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: var(--talo-surface);
-  border: 1px solid var(--talo-border);
+  aspect-ratio: 4 / 3;
+  background: var(--talo-surface-2);
   overflow: hidden;
-  transition: border-color 0.15s ease, transform 0.15s ease;
 }
-.home-cat__circle img {
+.room__media img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-.home-cat:hover .home-cat__circle {
-  border-color: var(--talo-primary);
-  transform: translateY(-3px);
-}
 
-.home-cat__initial {
+.room__initial {
   font-size: 1.75rem;
   font-weight: 800;
   color: var(--talo-primary);
 }
 
-.home-cat__name {
+.room__name {
+  padding: var(--space-3);
+  text-align: center;
   font-size: var(--fs-sm);
   font-weight: 600;
 }
 
-@media (min-width: 768px) {
-  .home-cats {
-    grid-template-columns: repeat(8, 1fr);
+@media (min-width: 640px) {
+  .rooms {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+  }
+}
+@media (min-width: 960px) {
+  .rooms {
+    grid-template-columns: repeat(6, 1fr);
   }
 }
 
-/* ─── Промо ─── */
-.home-promo {
-  display: flex;
-  flex-direction: column;
+/* ─── Банери акцій ─── */
+.promos {
+  display: grid;
+  grid-template-columns: 1fr;
   gap: var(--space-4);
-  align-items: flex-start;
-  padding: var(--space-6);
+}
+
+.promo {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  min-height: 220px;
+  padding: var(--space-5);
   border-radius: var(--radius-lg);
-  background: linear-gradient(120deg, var(--talo-primary), var(--talo-primary-dark));
-  color: #fff;
+  overflow: hidden;
+  isolation: isolate;
 }
 
-.home-promo__title {
-  color: #fff;
-  font-size: var(--fs-h2);
+.promo__image {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.home-promo__sub {
+/* Світла вуаль поверх фото: текст лишається читабельним на будь-якому знімку,
+   але сам банер не темніє, як було б зі звичайним затемненням. */
+.promo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    100deg,
+    rgba(255, 255, 255, 0.92) 0%,
+    rgba(255, 255, 255, 0.72) 45%,
+    rgba(255, 255, 255, 0) 85%
+  );
+}
+
+.promo__content {
+  max-width: 60%;
+}
+
+.promo__eyebrow {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--talo-price);
+}
+.promo--green .promo__eyebrow {
+  color: var(--talo-primary);
+}
+
+.promo__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  font-weight: 700;
+  margin-top: var(--space-1);
+}
+
+.promo__text {
   margin-top: var(--space-2);
-  color: rgba(255, 255, 255, 0.85);
+  font-size: var(--fs-sm);
+  color: var(--talo-muted);
+}
+
+.promo__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  padding: 0.5rem 1.1rem;
+  border-radius: var(--radius-pill);
+  background: var(--talo-accent);
+  color: #fff;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  transition: background 0.15s ease, gap 0.15s ease;
+}
+.promo__cta:hover {
+  background: var(--talo-accent-dark);
+  gap: var(--space-3);
+}
+.promo--green .promo__cta {
+  background: var(--talo-primary);
+}
+.promo--green .promo__cta:hover {
+  background: var(--talo-primary-dark);
 }
 
 @media (min-width: 768px) {
-  .home-promo {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    padding: var(--space-7);
+  .promos {
+    /* Перший банер ширший — так само, як у макеті. */
+    grid-template-columns: 1.6fr 1fr 1fr;
+  }
+  .promo__content {
+    max-width: 78%;
   }
 }

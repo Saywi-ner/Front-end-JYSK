@@ -5,12 +5,14 @@ import { Link } from "react-router-dom";
 import { ChevronRight } from "./icons";
 import "./SectionHeader.css";
 
-const SectionHeader = ({ title, linkTo, linkText = "Дивитись всі" }) => (
+// withDots: у макеті точками виділені блоки товарів, а службові секції
+// («Пошук по кімнатах», «Акції») йдуть простим заголовком.
+const SectionHeader = ({ title, linkTo, linkText = "Дивитись всі", withDots = true }) => (
   <header className="section-header">
     <h2 className="section-header__title">
-      <span className="section-header__dots" aria-hidden="true" />
+      {withDots && <span className="section-header__dots" aria-hidden="true" />}
       {title}
-      <span className="section-header__dots" aria-hidden="true" />
+      {withDots && <span className="section-header__dots" aria-hidden="true" />}
     </h2>
     {linkTo && (
       <Link className="section-header__link" to={linkTo}>
