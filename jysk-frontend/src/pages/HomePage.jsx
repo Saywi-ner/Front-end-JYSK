@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import useProductStore from "../stores/productStore";
 import useCategoryStore from "../stores/categoryStore";
 import SectionHeader from "../components/SectionHeader";
-import ProductGrid from "../components/ProductGrid";
+import ProductCarousel from "../components/ProductCarousel";
 import { ChevronRight } from "../components/icons";
 import "./HomePage.css";
 
@@ -88,21 +88,21 @@ const HomePage = () => {
       {homepage?.newArrivals?.length > 0 && (
         <section className="container section">
           <SectionHeader title="Новинки" linkTo="/catalog?isNew=1" />
-          <ProductGrid products={homepage.newArrivals} />
+          <ProductCarousel products={homepage.newArrivals} />
         </section>
       )}
 
       {homepage?.onSale?.length > 0 && (
         <section className="container section">
           <SectionHeader title="Акції" linkTo="/catalog?onSale=1" />
-          <ProductGrid products={homepage.onSale} />
+          <ProductCarousel products={homepage.onSale} />
         </section>
       )}
 
       {homepage?.recommended?.length > 0 && (
         <section className="container section">
           <SectionHeader title="Вам може сподобатись" linkTo="/catalog" />
-          <ProductGrid products={homepage.recommended} />
+          <ProductCarousel products={homepage.recommended} />
         </section>
       )}
     </div>

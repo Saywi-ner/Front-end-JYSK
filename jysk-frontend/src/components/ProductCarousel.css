@@ -1,0 +1,79 @@
+/* Горизонтальна стрічка карток зі стрілками (блоки товарів у макеті). */
+
+.product-carousel {
+  position: relative;
+}
+
+.product-carousel__track {
+  display: flex;
+  gap: var(--space-4);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  /* Місце під тінь картки на ховері, інакше її обрізає overflow. */
+  padding: var(--space-2) var(--space-1) var(--space-4);
+  scrollbar-width: none;
+}
+.product-carousel__track::-webkit-scrollbar {
+  display: none;
+}
+
+.product-carousel__item {
+  /* Дві картки на екран — базова, мобільна розкладка. */
+  flex: 0 0 calc((100% - var(--space-4)) / 2);
+  scroll-snap-align: start;
+}
+
+.product-carousel__nav {
+  position: absolute;
+  top: calc(50% - 24px);
+  z-index: 2;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--talo-surface);
+  color: var(--talo-ink);
+  box-shadow: var(--shadow);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.product-carousel__nav:hover {
+  background: var(--talo-primary);
+  color: #fff;
+}
+.product-carousel__nav[hidden] {
+  display: none;
+}
+
+/* Стрілки лежать поверх крайніх карток, як у макеті. Виносити їх за межі
+   контейнера не можна — на вузьких вікнах це давало горизонтальний скрол
+   усієї сторінки. */
+.product-carousel__nav--prev {
+  left: var(--space-2);
+}
+.product-carousel__nav--next {
+  right: var(--space-2);
+}
+
+/* На тачскрінах секція гортається пальцем — стрілки лише заважали б. */
+@media (max-width: 767px) {
+  .product-carousel__nav {
+    display: none;
+  }
+}
+
+@media (min-width: 640px) {
+  .product-carousel__item {
+    flex: 0 0 calc((100% - 2 * var(--space-4)) / 3);
+  }
+}
+
+@media (min-width: 960px) {
+  .product-carousel__track {
+    gap: var(--space-5);
+  }
+  .product-carousel__item {
+    /* Чотири з половиною картки: обрізана п'ята підказує, що стрічка гортається. */
+    flex: 0 0 calc((100% - 4 * var(--space-5)) / 4.5);
+  }
+}

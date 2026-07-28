@@ -11,29 +11,47 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-3);
+  font-family: var(--font-display);
   font-size: var(--fs-h2);
+  font-weight: 800;
 }
 
+/* Три кружечки обабіч заголовка — характерна деталь макета. */
 .section-header__dots {
-  width: 30px;
-  height: 6px;
-  border-radius: var(--radius-pill);
-  background: repeating-linear-gradient(
-    90deg,
-    var(--talo-navy) 0 6px,
-    transparent 6px 12px
+  width: 34px;
+  height: 8px;
+  background-image: radial-gradient(
+    circle at 4px 50%,
+    var(--talo-primary) 3.5px,
+    transparent 3.5px
   );
+  background-size: 12px 100%;
+  background-repeat: repeat-x;
 }
 
 .section-header__link {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-1);
-  font-weight: 700;
-  font-size: var(--fs-sm);
-  color: var(--talo-primary);
-  transition: gap 0.15s ease;
+  gap: var(--space-2);
+  font-weight: 600;
+  font-size: var(--fs-body);
+  color: var(--talo-ink);
+  transition: gap 0.15s ease, color 0.15s ease;
 }
 .section-header__link:hover {
   gap: var(--space-3);
+  color: var(--talo-primary);
+}
+
+@media (max-width: 639px) {
+  .section-header__title {
+    font-size: var(--fs-h3);
+  }
+  /* На вузьких екранах точки лише зліва — праворуч не вистачає місця. */
+  .section-header__title .section-header__dots:last-child {
+    display: none;
+  }
+  .section-header__link {
+    font-size: var(--fs-sm);
+  }
 }
