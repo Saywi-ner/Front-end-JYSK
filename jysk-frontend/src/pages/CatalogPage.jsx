@@ -8,7 +8,7 @@ import { useSearchParams, useLocation } from "react-router-dom";
 import useProductStore from "../stores/productStore";
 import useCategoryStore from "../stores/categoryStore";
 import ProductGrid from "../components/ProductGrid";
-import { ChevronLeft, ChevronRight } from "../components/icons";
+import { ChevronLeft, ChevronRight, FilterIcon, CloseIcon } from "../components/icons";
 import ProductAdminForm from "../components/ProductAdminForm";
 import "./CatalogPage.css";
 
@@ -35,6 +35,9 @@ const CatalogPage = () => {
   const [minPrice, setMinPrice] = useState(searchParams.get("minPrice") ?? "");
   const [maxPrice, setMaxPrice] = useState(searchParams.get("maxPrice") ?? "");
   const [currentPage, setCurrentPage] = useState(1);
+  // На вузьких екранах колонка фільтрів займала цілий екран перед товарами,
+  // тому там вона ховається за кнопку «Фільтр» і відкривається панеллю.
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const search = searchParams.get("search") ?? "";
   const categoryId = searchParams.get("categoryId") ?? "";
@@ -104,10 +107,59 @@ const CatalogPage = () => {
         <p className="catalog__count">Знайдено товарів: {totalCount}</p>
       </header>
 
+      {/* ─── Панель дій для вузьких екранів ─── */}
+      <div className="catalog__mobile-bar">
+        <button
+          type="button"
+          className="catalog__tool-btn"
+          onClick={() => setFiltersOpen(true)}
+        >
+          <FilterIcon width={18} height={18} />
+          Фільтр
+        </button>
+
+        <label className="catalog__tool-btn catalog__tool-btn--select">
+          <span>Сортування</span>
+          <select
+            className="catalog__tool-select"
+            value={sortBy}
+            onChange={(e) => patchParams({ sort: e.target.value })}
+            aria-label="Сортувати товари"
+          >
+            {SORT_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
+          </select>
+          <ChevronRight width={16} height={16} className="catalog__tool-chevron" />
+        </label>
+      </div>
+
       <div className="catalog__layout">
         {/* ─── Фільтри ─── */}
-        <aside className="catalog__filters" aria-label="Фільтри">
+        {filtersOpen && (
+          <button
+            type="button"
+            className="catalog__overlay"
+            aria-label="Закрити фільтри"
+            onClick={() => setFiltersOpen(false)}
+          />
+        )}
+        <aside
+          className={"catalog__filters" + (filtersOpen ? " catalog__filters--open" : "")}
+          aria-label="Фільтри"
+        >
           <div className="filters">
+            <div className="filters__head">
+              <h2 className="filters__heading">Фільтри</h2>
+              <button
+                type="button"
+                className="filters__close"
+                aria-label="Закрити фільтри"
+                onClick={() => setFiltersOpen(false)}
+              >
+                <CloseIcon width={20} height={20} />
+              </button>
+            </div>
             <div className="filters__group">
               <h2 className="filters__title">Категорії</h2>
               <ul className="filters__list">
@@ -175,6 +227,16 @@ const CatalogPage = () => {
 
             <button type="button" className="filters__reset" onClick={resetFilters}>
               Скинути фільтри
+            </button>
+
+            {/* Видно лише у висувній панелі: фільтри вже застосовані,
+                кнопка просто повертає до списку товарів. */}
+            <button
+              type="button"
+              className="btn btn--primary btn--block filters__apply"
+              onClick={() => setFiltersOpen(false)}
+            >
+              Показати товари ({totalCount})
             </button>
           </div>
         </aside>

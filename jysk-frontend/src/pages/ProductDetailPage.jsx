@@ -13,7 +13,7 @@ import useCategoryStore from "../stores/categoryStore";
 import ProductGallery from "../components/ProductGallery";
 import VariantSelector from "../components/VariantSelector";
 import RatingStars from "../components/RatingStars";
-import ProductGrid from "../components/ProductGrid";
+import ProductCarousel from "../components/ProductCarousel";
 import SectionHeader from "../components/SectionHeader";
 import ProductAdminPanel from "../components/ProductAdminPanel";
 import { CartIcon, ChevronRight } from "../components/icons";
@@ -238,7 +238,7 @@ const ProductDetailView = ({ id }) => {
       {p.relatedProducts?.length > 0 && (
         <section className="section">
           <SectionHeader title="З цим товаром купують" />
-          <ProductGrid products={p.relatedProducts} />
+          <ProductCarousel products={p.relatedProducts} />
         </section>
       )}
 

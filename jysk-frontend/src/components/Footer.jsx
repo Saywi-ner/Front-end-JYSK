@@ -8,19 +8,20 @@ const COLUMNS = [
   {
     title: "Про TALO",
     links: [
-      { to: "/", label: "Про нас" },
-      { to: "/", label: "Блог" },
-      { to: "/", label: "Вакансії" },
-      { to: "/", label: "B2B" },
+      { to: "/about", label: "Про нас" },
+      { to: "/stores", label: "Магазини" },
+      { to: "/careers", label: "Вакансії" },
+      { to: "/b2b", label: "B2B" },
     ],
   },
   {
     title: "Допомога",
     links: [
-      { to: "/", label: "Доставка та оплата" },
-      { to: "/", label: "Повернення" },
-      { to: "/", label: "Гарантія" },
-      { to: "/", label: "Підтримка" },
+      { to: "/delivery", label: "Доставка та оплата" },
+      { to: "/returns", label: "Повернення" },
+      { to: "/warranty", label: "Гарантія" },
+      { to: "/support", label: "Підтримка" },
+      { to: "/contacts", label: "Контакти" },
     ],
   },
   {

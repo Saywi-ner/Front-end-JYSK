@@ -1,0 +1,132 @@
+/* Інформаційні сторінки: Про нас, Доставка, Гарантія тощо. */
+
+.info {
+  padding-block: var(--space-5) var(--space-8);
+  /* Довгий текст важко читати на всю ширину екрана. */
+  max-width: 820px;
+}
+
+.info__breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-sm);
+  color: var(--talo-muted);
+  margin-bottom: var(--space-5);
+}
+.info__breadcrumbs a:hover {
+  color: var(--talo-primary);
+}
+
+.info__head {
+  margin-bottom: var(--space-6);
+}
+
+.info__title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--fs-h1);
+}
+
+.info__lead {
+  margin-top: var(--space-3);
+  font-size: 1.125rem;
+  color: var(--talo-muted);
+}
+
+.info__section {
+  margin-bottom: var(--space-6);
+}
+
+.info__section-title {
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
+  font-weight: 700;
+  margin-bottom: var(--space-4);
+}
+
+.info__text {
+  margin-bottom: var(--space-3);
+  line-height: 1.65;
+}
+
+/* ── Списки ── */
+.info__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.info__list-item {
+  position: relative;
+  padding-left: var(--space-5);
+  line-height: 1.6;
+}
+.info__list-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--talo-primary);
+}
+
+/* ── Картки ── */
+.info__cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+.info-card {
+  padding: var(--space-5);
+  background: var(--talo-surface);
+  border: 1px solid var(--talo-border);
+  border-radius: var(--radius);
+}
+
+.info-card__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  font-weight: 700;
+  margin-bottom: var(--space-2);
+}
+
+.info-card__text {
+  color: var(--talo-muted);
+  line-height: 1.55;
+}
+
+/* ── Пари «назва — значення» ── */
+.info__facts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.info__fact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--talo-border);
+}
+.info__fact dt {
+  min-width: 190px;
+  color: var(--talo-muted);
+}
+.info__fact dd {
+  font-weight: 600;
+}
+
+.info__back {
+  margin-top: var(--space-7);
+}
+
+@media (min-width: 640px) {
+  .info__cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
