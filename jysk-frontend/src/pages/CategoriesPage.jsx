@@ -4,12 +4,14 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import useCategoryStore from "../stores/categoryStore";
+import useAuthStore from "../stores/authStore";
 import CategoryAdmin from "../components/CategoryAdmin";
 import { ChevronRight } from "../components/icons";
 import "./CategoriesPage.css";
 
 const CategoriesPage = () => {
   const { categories, isLoading, error, fetchCategories } = useCategoryStore();
+  const isAdmin = useAuthStore((s) => s.customer?.role === "Admin");
 
   useEffect(() => {
     fetchCategories();
@@ -71,7 +73,8 @@ const CategoriesPage = () => {
         <p className="categories__empty">Категорій ще немає.</p>
       )}
 
-      <CategoryAdmin categories={categories} />
+      {/* CRUD категорій — лише для адміністратора; бекенд усе одно віддасть 403. */}
+      {isAdmin && <CategoryAdmin categories={categories} />}
     </div>
   );
 };

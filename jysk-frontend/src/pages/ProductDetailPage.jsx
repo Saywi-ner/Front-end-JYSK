@@ -9,6 +9,7 @@ import useProductStore from "../stores/productStore";
 import useVariantStore from "../stores/variantStore";
 import useReviewStore from "../stores/reviewStore";
 import useAuthStore from "../stores/authStore";
+import useCartStore from "../stores/cartStore";
 import useCategoryStore from "../stores/categoryStore";
 import ProductGallery from "../components/ProductGallery";
 import VariantSelector from "../components/VariantSelector";
@@ -33,10 +34,13 @@ const ProductDetailView = ({ id }) => {
   const { reviews, fetchReviews, addReview, error: reviewError } = useReviewStore();
   const { customer } = useAuthStore();
   const { categories, fetchCategories } = useCategoryStore();
+  const addToCart = useCartStore((s) => s.add);
+  const isAdmin = customer?.role === "Admin";
 
   const [selectedVariantId, setSelectedVariantId] = useState(null);
   const [tab, setTab] = useState("description");
   const [newReview, setNewReview] = useState({ rating: 5, comment: "" });
+  const [addedToCart, setAddedToCart] = useState(false);
 
   useEffect(() => {
     fetchProductById(id);
@@ -66,11 +70,17 @@ const ProductDetailView = ({ id }) => {
 
   const handleAddReview = async (e) => {
     e.preventDefault();
-    const ok = await addReview(p.id, Number(newReview.rating), newReview.comment, customer.id);
+    // Автора бекенд бере з JWT — customerId у тілі запиту більше не передаємо.
+    const ok = await addReview(p.id, Number(newReview.rating), newReview.comment);
     if (ok) {
       setNewReview({ rating: 5, comment: "" });
       fetchProductById(p.id); // оновити avgRating/reviewCount
     }
+  };
+
+  const handleAddToCart = () => {
+    addToCart(p, { variant: selectedVariant ?? null });
+    setAddedToCart(true);
   };
 
   return (
@@ -128,9 +138,19 @@ const ProductDetailView = ({ id }) => {
           </p>
 
           <div className="detail__cta">
-            <button type="button" className="btn btn--primary btn--block detail__buy" disabled={!inStock}>
+            <button
+              type="button"
+              className="btn btn--primary btn--block detail__buy"
+              disabled={!inStock}
+              onClick={handleAddToCart}
+            >
               <CartIcon width={20} height={20} /> Додати в кошик
             </button>
+            {addedToCart && (
+              <p className="detail__muted" role="status">
+                Товар у кошику. <Link to="/cart" className="detail__link">Перейти до оформлення</Link>
+              </p>
+            )}
           </div>
 
           {specs.length > 0 && (
@@ -243,7 +263,7 @@ const ProductDetailView = ({ id }) => {
       )}
 
       {/* ─── Адмін ─── */}
-      <ProductAdminPanel product={p} categories={categories} variants={variants} />
+      {isAdmin && <ProductAdminPanel product={p} categories={categories} variants={variants} />}
     </div>
   );
 };

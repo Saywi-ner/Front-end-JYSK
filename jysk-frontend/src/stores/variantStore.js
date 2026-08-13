@@ -1,5 +1,5 @@
 // src/stores/variantStore.js
-// Варианты (размер/цвет) — дочерняя сущность товара.
+// Варианты (размер/цвет) — дочерняя сущность товара. Мутации только для Admin.
 //
 // Контракт бэкенда:
 //   GET    /products/{productId}/variants -> [{ id(int), label, color, size, price, stock }]
@@ -7,7 +7,7 @@
 //   DELETE /products/{productId}/variants/{variantId} -> 204
 
 import { create } from "zustand";
-import api from "../api/axios";
+import api, { asArray, errorMessage } from "../api/axios";
 
 const useVariantStore = create((set) => ({
   variants:  [],
@@ -18,9 +18,9 @@ const useVariantStore = create((set) => ({
     set({ isLoading: true, error: null, variants: [] });
     try {
       const { data } = await api.get(`/products/${productId}/variants`);
-      set({ variants: data, isLoading: false });
-    } catch {
-      set({ error: "Не удалось загрузить варианты", isLoading: false });
+      set({ variants: asArray(data), isLoading: false });
+    } catch (err) {
+      set({ variants: [], error: errorMessage(err, "Не удалось загрузить варианты"), isLoading: false });
     }
   },
 
@@ -30,8 +30,8 @@ const useVariantStore = create((set) => ({
       const { data } = await api.post(`/products/${productId}/variants`, variantData);
       set((state) => ({ variants: [...state.variants, data], isLoading: false }));
       return true;
-    } catch {
-      set({ error: "Не удалось добавить вариант", isLoading: false });
+    } catch (err) {
+      set({ error: errorMessage(err, "Не удалось добавить вариант"), isLoading: false });
       return false;
     }
   },
@@ -45,8 +45,8 @@ const useVariantStore = create((set) => ({
         isLoading: false,
       }));
       return true;
-    } catch {
-      set({ error: "Не удалось удалить вариант", isLoading: false });
+    } catch (err) {
+      set({ error: errorMessage(err, "Не удалось удалить вариант"), isLoading: false });
       return false;
     }
   },

@@ -2,12 +2,13 @@
 // Вхід і реєстрація. POST /auth/login | POST /auth/register
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import useAuthStore from "../stores/authStore";
 import "./AuthPage.css";
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { login, register, isLoading, error } = useAuthStore();
 
   const [mode, setMode] = useState("login"); // login | register
@@ -22,7 +23,10 @@ const LoginPage = () => {
     const ok = mode === "login"
       ? await login(form.email, form.password)
       : await register(form);
-    if (ok) navigate("/");
+
+    // RequireAuth кладе сюди сторінку, з якої нас розвернули: після входу
+    // повертаємось саме туди, а не на головну.
+    if (ok) navigate(location.state?.from?.pathname ?? "/", { replace: true });
   };
 
   return (
@@ -42,17 +46,19 @@ const LoginPage = () => {
         <form className="auth__form" onSubmit={handleSubmit}>
           {mode === "register" && (
             <>
-              <input required className="field" placeholder="Ім'я"
+              <input required className="field" placeholder="Ім'я" maxLength={100}
                 value={form.firstName} onChange={set("firstName")} />
-              <input required className="field" placeholder="Прізвище"
+              <input required className="field" placeholder="Прізвище" maxLength={100}
                 value={form.lastName} onChange={set("lastName")} />
-              <input className="field" placeholder="Телефон (+380…)"
+              <input className="field" placeholder="Телефон (+380…)" maxLength={20}
                 value={form.phoneNumber} onChange={set("phoneNumber")} />
             </>
           )}
           <input required type="email" className="field" placeholder="Email"
             value={form.email} onChange={set("email")} />
+          {/* Бекенд вимагає мінімум 6 символів — попереджаємо про це до відправки. */}
           <input required type="password" className="field" placeholder="Пароль"
+            minLength={mode === "register" ? 6 : undefined}
             value={form.password} onChange={set("password")} />
           <button type="submit" className="btn btn--primary btn--block" disabled={isLoading}>
             {isLoading ? "…" : mode === "login" ? "Увійти" : "Зареєструватись"}

@@ -1,12 +1,14 @@
 // src/pages/CatalogPage.jsx
 // Каталог / результати пошуку: фільтри + сітка + пагінація.
-// Фільтри синхронізовані з URL (?search=&categoryId=&onSale=&isNew=&sort=).
+// Фільтри й номер сторінки синхронізовані з URL
+// (?search=&categoryId=&onSale=&isNew=&sort=&page=).
 // Усі запити — через методи сторів, не напряму axios.
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams, useLocation } from "react-router-dom";
 import useProductStore from "../stores/productStore";
 import useCategoryStore from "../stores/categoryStore";
+import useAuthStore from "../stores/authStore";
 import ProductGrid from "../components/ProductGrid";
 import { ChevronLeft, ChevronRight, FilterIcon, CloseIcon } from "../components/icons";
 import ProductAdminForm from "../components/ProductAdminForm";
@@ -30,11 +32,11 @@ const CatalogPage = () => {
   const { items, totalCount, page, totalPages, isLoading, error,
           fetchProducts, deleteProduct } = useProductStore();
   const { categories, fetchCategories } = useCategoryStore();
+  const isAdmin = useAuthStore((s) => s.customer?.role === "Admin");
 
   // Локальні стани цінового діапазону (щоб не смикати URL на кожну цифру).
   const [minPrice, setMinPrice] = useState(searchParams.get("minPrice") ?? "");
   const [maxPrice, setMaxPrice] = useState(searchParams.get("maxPrice") ?? "");
-  const [currentPage, setCurrentPage] = useState(1);
   // На вузьких екранах колонка фільтрів займала цілий екран перед товарами,
   // тому там вона ховається за кнопку «Фільтр» і відкривається панеллю.
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -44,12 +46,17 @@ const CatalogPage = () => {
   const onSale = searchParams.get("onSale") === "1";
   const isNew = searchParams.get("isNew") === "1";
   const sortBy = searchParams.get("sort") ?? "";
+  // Сторінка живе в URL, а не в локальному стані: інакше кнопка «Назад»
+  // у браузері й посилання на другу сторінку каталогу не працювали.
+  const currentPage = Math.max(1, Number(searchParams.get("page")) || 1);
 
   useEffect(() => {
     fetchCategories();
   }, [fetchCategories]);
 
-  useEffect(() => {
+  // Один об'єкт параметрів на весь ефект: раніше в залежностях лежали і
+  // searchParams, і виведені з нього значення — запит летів двічі на кожну зміну.
+  const queryParams = useMemo(() => {
     const params = { page: currentPage, pageSize: PAGE_SIZE };
     if (search) params.search = search;
     if (categoryId) params.categoryId = Number(categoryId);
@@ -58,8 +65,12 @@ const CatalogPage = () => {
     if (sortBy) params.sortBy = sortBy;
     if (searchParams.get("minPrice")) params.minPrice = Number(searchParams.get("minPrice"));
     if (searchParams.get("maxPrice")) params.maxPrice = Number(searchParams.get("maxPrice"));
-    fetchProducts(params);
-  }, [search, categoryId, onSale, isNew, sortBy, currentPage, searchParams, fetchProducts]);
+    return params;
+  }, [search, categoryId, onSale, isNew, sortBy, currentPage, searchParams]);
+
+  useEffect(() => {
+    fetchProducts(queryParams);
+  }, [queryParams, fetchProducts]);
 
   // Оновлення одного параметра URL (скидаючи порожні). Зміна фільтра завжди
   // повертає на першу сторінку.
@@ -69,9 +80,11 @@ const CatalogPage = () => {
       if (v === "" || v == null || v === false) next.delete(k);
       else next.set(k, v === true ? "1" : String(v));
     });
-    setCurrentPage(1);
+    if (!("page" in patch)) next.delete("page");
     setSearchParams(next);
   };
+
+  const goToPage = (nextPage) => patchParams({ page: nextPage > 1 ? nextPage : "" });
 
   const applyPrice = (e) => {
     e.preventDefault();
@@ -81,7 +94,6 @@ const CatalogPage = () => {
   const resetFilters = () => {
     setMinPrice("");
     setMaxPrice("");
-    setCurrentPage(1);
     setSearchParams(new URLSearchParams());
   };
 
@@ -264,7 +276,9 @@ const CatalogPage = () => {
           {!isLoading && (
             <ProductGrid
               products={items}
-              onDelete={handleDelete}
+              // Кнопку «Видалити» показуємо лише адміністратору: бекенд
+              // усе одно віддасть 403, а покупцю вона просто заважала.
+              onDelete={isAdmin ? handleDelete : undefined}
               empty="За вашим запитом нічого не знайдено."
             />
           )}
@@ -274,7 +288,7 @@ const CatalogPage = () => {
               <button
                 type="button" className="pagination__btn"
                 disabled={page <= 1}
-                onClick={() => setCurrentPage(page - 1)}
+                onClick={() => goToPage(page - 1)}
               >
                 <ChevronLeft width={18} height={18} /> Назад
               </button>
@@ -282,14 +296,14 @@ const CatalogPage = () => {
               <button
                 type="button" className="pagination__btn"
                 disabled={page >= totalPages}
-                onClick={() => setCurrentPage(page + 1)}
+                onClick={() => goToPage(page + 1)}
               >
                 Далі <ChevronRight width={18} height={18} />
               </button>
             </nav>
           )}
 
-          <ProductAdminForm categories={categories} />
+          {isAdmin && <ProductAdminForm categories={categories} />}
         </div>
       </div>
     </div>

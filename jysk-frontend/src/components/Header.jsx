@@ -7,20 +7,39 @@
 // у вузькій шапці для них немає місця, але з сайту вони зникати не мають.
 
 import { useEffect, useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import useAuthStore from "../stores/authStore";
+import useCartStore from "../stores/cartStore";
+import useWishlistStore from "../stores/wishlistStore";
 import { SearchIcon, HeartIcon, CartIcon, UserIcon, MenuIcon, CloseIcon } from "./icons";
 import "./Header.css";
 
 const NAV = [
   { to: "/catalog", label: "Каталог" },
   { to: "/categories", label: "Категорії" },
+  { to: "/rooms", label: "Кімнати" },
+  { to: "/collections", label: "Колекції" },
   { to: "/catalog?onSale=1", label: "Акції" },
 ];
 
+// NavLink порівнює лише шлях, тому «Каталог» і «Акції» підсвічувались разом:
+// обидва ведуть на /catalog. Звіряємо ще й query-рядок.
+const useIsActiveLink = () => {
+  const { pathname, search } = useLocation();
+  return (to) => {
+    const [path, query = ""] = to.split("?");
+    if (pathname !== path) return false;
+    return new URLSearchParams(search).toString() === new URLSearchParams(query).toString();
+  };
+};
+
 const Header = () => {
   const navigate = useNavigate();
+  const isActive = useIsActiveLink();
   const { customer } = useAuthStore();
+  const cartCount = useCartStore((s) => s.items.reduce((sum, i) => sum + i.quantity, 0));
+  const wishCount = useWishlistStore((s) => s.items.length);
+
   const [query, setQuery] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -64,7 +83,14 @@ const Header = () => {
 
           <nav className="header__nav">
             {NAV.map((item) => (
-              <NavLink key={item.to} to={item.to} className="header__nav-link">
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end
+                className={() =>
+                  "header__nav-link" + (isActive(item.to) ? " active" : "")
+                }
+              >
                 {item.label}
               </NavLink>
             ))}
@@ -85,13 +111,14 @@ const Header = () => {
           </form>
 
           <div className="header__actions">
-            <button
-              type="button"
+            <Link
+              to="/wishlist"
               className="header__icon-btn header__icon-btn--desktop"
-              aria-label="Обране"
+              aria-label={`Обране (${wishCount})`}
             >
               <HeartIcon width={22} height={22} />
-            </button>
+              {wishCount > 0 && <span className="header__badge">{wishCount}</span>}
+            </Link>
             <Link
               to={customer ? "/profile" : "/login"}
               className="header__icon-btn header__icon-btn--desktop"
@@ -100,9 +127,10 @@ const Header = () => {
               <UserIcon width={22} height={22} />
               {customer && <span className="header__user-name">{customer.firstName}</span>}
             </Link>
-            <button type="button" className="header__icon-btn" aria-label="Кошик">
+            <Link to="/cart" className="header__icon-btn" aria-label={`Кошик (${cartCount})`}>
               <CartIcon width={22} height={22} />
-            </button>
+              {cartCount > 0 && <span className="header__badge">{cartCount}</span>}
+            </Link>
           </div>
         </div>
       </div>
@@ -121,7 +149,10 @@ const Header = () => {
               <NavLink
                 key={item.to}
                 to={item.to}
-                className="header__drawer-link"
+                end
+                className={() =>
+                  "header__drawer-link" + (isActive(item.to) ? " active" : "")
+                }
                 onClick={closeMenu}
               >
                 {item.label}
@@ -138,10 +169,16 @@ const Header = () => {
               <UserIcon width={20} height={20} />
               {customer ? customer.firstName : "Увійти"}
             </Link>
-            <button type="button" className="header__drawer-link" onClick={closeMenu}>
+            {customer && (
+              <Link to="/orders" className="header__drawer-link" onClick={closeMenu}>
+                <CartIcon width={20} height={20} />
+                Мої замовлення
+              </Link>
+            )}
+            <Link to="/wishlist" className="header__drawer-link" onClick={closeMenu}>
               <HeartIcon width={20} height={20} />
-              Обране
-            </button>
+              Обране{wishCount > 0 ? ` (${wishCount})` : ""}
+            </Link>
           </nav>
         </>
       )}

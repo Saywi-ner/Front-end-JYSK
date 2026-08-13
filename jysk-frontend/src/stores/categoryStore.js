@@ -1,15 +1,15 @@
 // src/stores/categoryStore.js
-// Категории: полный CRUD.
+// Категории: полный CRUD (мутации — только для роли Admin).
 //
 // Контракт бэкенда:
 //   GET    /categories      -> [{ id(int), name, description, imageUrl, parentCategoryId }]
 //   GET    /categories/{id} -> то же + subCategories[]
 //   POST   /categories      {name, description, imageUrl, parentCategoryId}
 //   PUT    /categories/{id} (те же поля)
-//   DELETE /categories/{id} -> 204
+//   DELETE /categories/{id} -> 204 | 409 если есть товары или подкатегории
 
 import { create } from "zustand";
-import api from "../api/axios";
+import api, { asArray, errorMessage } from "../api/axios";
 
 const useCategoryStore = create((set, get) => ({
   categories:       [],
@@ -21,9 +21,11 @@ const useCategoryStore = create((set, get) => ({
     set({ isLoading: true, error: null });
     try {
       const { data } = await api.get("/categories");
-      set({ categories: data, isLoading: false });
-    } catch {
-      set({ error: "Не удалось загрузить категории", isLoading: false });
+      // asArray, а не data напрямую: при недоступном бэкенде сюда прилетал HTML,
+      // и categories.filter(...) в рендере валил всю страницу.
+      set({ categories: asArray(data), isLoading: false });
+    } catch (err) {
+      set({ categories: [], error: errorMessage(err, "Не удалось загрузить категории"), isLoading: false });
     }
   },
 
@@ -32,20 +34,19 @@ const useCategoryStore = create((set, get) => ({
     try {
       const { data } = await api.get(`/categories/${id}`);
       set({ selectedCategory: data, isLoading: false });
-    } catch {
-      set({ error: "Категория не найдена", isLoading: false });
+    } catch (err) {
+      set({ error: errorMessage(err, "Категория не найдена"), isLoading: false });
     }
   },
 
-  // POST/PUT возвращают сырую сущность — после мутаций перезагружаем список.
   createCategory: async (categoryData) => {
     set({ isLoading: true, error: null });
     try {
       await api.post("/categories", categoryData);
       await get().fetchCategories();
       return true;
-    } catch {
-      set({ error: "Ошибка создания категории", isLoading: false });
+    } catch (err) {
+      set({ error: errorMessage(err, "Ошибка создания категории"), isLoading: false });
       return false;
     }
   },
@@ -56,8 +57,8 @@ const useCategoryStore = create((set, get) => ({
       await api.put(`/categories/${id}`, categoryData);
       await get().fetchCategories();
       return true;
-    } catch {
-      set({ error: "Ошибка обновления категории", isLoading: false });
+    } catch (err) {
+      set({ error: errorMessage(err, "Ошибка обновления категории"), isLoading: false });
       return false;
     }
   },
@@ -71,8 +72,8 @@ const useCategoryStore = create((set, get) => ({
         isLoading:  false,
       }));
       return true;
-    } catch {
-      set({ error: "Ошибка удаления категории (возможно, в ней есть товары)", isLoading: false });
+    } catch (err) {
+      set({ error: errorMessage(err, "Ошибка удаления категории"), isLoading: false });
       return false;
     }
   },

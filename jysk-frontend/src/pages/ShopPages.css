@@ -1,0 +1,344 @@
+/* src/pages/ShopPages.css
+   Спільні стилі сторінок покупки: кошик, оформлення, замовлення, обране,
+   кімнати й колекції. Один файл замість шести майже однакових — блоки
+   у них ті самі (заголовок, список рядків, картка підсумку). */
+
+.shop {
+  padding-block: var(--space-6) var(--space-8);
+}
+
+.shop__head {
+  margin-bottom: var(--space-5);
+}
+
+.shop__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-h1);
+  margin: 0 0 var(--space-2);
+}
+
+.shop__sub,
+.shop__muted {
+  color: var(--talo-muted);
+  margin: 0;
+}
+
+.shop__error {
+  color: var(--talo-price);
+  margin: 0 0 var(--space-4);
+}
+
+.shop__empty {
+  padding: var(--space-7) var(--space-4);
+  text-align: center;
+  background: var(--talo-surface);
+  border: 1px solid var(--talo-border);
+  border-radius: var(--radius-lg);
+}
+
+.shop__empty p {
+  color: var(--talo-muted);
+  margin: 0 0 var(--space-4);
+}
+
+/* ── Двоколонковий макет: список + підсумок ── */
+.shop__layout {
+  display: grid;
+  gap: var(--space-5);
+}
+
+@media (min-width: 900px) {
+  .shop__layout {
+    grid-template-columns: minmax(0, 1fr) 320px;
+    align-items: start;
+  }
+}
+
+.shop__panel {
+  background: var(--talo-surface);
+  border: 1px solid var(--talo-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+}
+
+.shop__panel-title {
+  font-size: var(--fs-h3);
+  margin: 0 0 var(--space-4);
+}
+
+/* Підсумок «прилипає» при прокрутці довгого списку. */
+@media (min-width: 900px) {
+  .shop__summary {
+    position: sticky;
+    top: calc(var(--header-h) + var(--space-4));
+  }
+}
+
+.shop__summary-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-block: var(--space-2);
+  color: var(--talo-muted);
+}
+
+.shop__summary-row--total {
+  border-top: 1px solid var(--talo-border);
+  margin-top: var(--space-2);
+  padding-top: var(--space-3);
+  color: var(--talo-ink);
+  font-size: var(--fs-h3);
+  font-weight: 700;
+}
+
+/* ── Рядок кошика ── */
+.cart-line {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: var(--space-4);
+  padding-block: var(--space-4);
+  border-bottom: 1px solid var(--talo-border);
+}
+
+.cart-line:last-child {
+  border-bottom: 0;
+}
+
+@media (min-width: 640px) {
+  .cart-line {
+    grid-template-columns: 96px minmax(0, 1fr) auto;
+    align-items: center;
+  }
+}
+
+.cart-line__media {
+  aspect-ratio: 1;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--talo-surface-2);
+  display: grid;
+  place-items: center;
+}
+
+.cart-line__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cart-line__placeholder {
+  color: var(--talo-faint);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.1em;
+}
+
+.cart-line__name {
+  font-size: var(--fs-body);
+  font-weight: 600;
+  margin: 0 0 var(--space-1);
+}
+
+.cart-line__variant {
+  color: var(--talo-muted);
+  font-size: var(--fs-sm);
+  margin: 0 0 var(--space-2);
+}
+
+.cart-line__price {
+  font-weight: 700;
+}
+
+.cart-line__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.cart-line__qty {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--talo-border-strong);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.cart-line__qty button {
+  width: 32px;
+  height: 32px;
+  font-size: 18px;
+  line-height: 1;
+  color: var(--talo-ink);
+}
+
+.cart-line__qty button:hover:not(:disabled) {
+  background: var(--talo-surface-2);
+}
+
+.cart-line__qty button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.cart-line__qty output {
+  min-width: 32px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.cart-line__remove {
+  color: var(--talo-muted);
+  font-size: var(--fs-sm);
+  text-decoration: underline;
+}
+
+.cart-line__remove:hover {
+  color: var(--talo-price);
+}
+
+/* ── Замовлення ── */
+.order-row {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border: 1px solid var(--talo-border);
+  border-radius: var(--radius);
+  background: var(--talo-surface);
+  margin-bottom: var(--space-3);
+}
+
+@media (min-width: 720px) {
+  .order-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+}
+
+.order-row__id {
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+.order-row__meta {
+  color: var(--talo-muted);
+  font-size: var(--fs-sm);
+}
+
+.order-row__side {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  justify-content: space-between;
+}
+
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  background: var(--talo-surface-2);
+  color: var(--talo-ink);
+  white-space: nowrap;
+}
+
+.status-chip--Pending { background: #f3e6cf; color: #7a5a17; }
+.status-chip--Confirmed { background: var(--talo-primary-soft); color: var(--talo-primary-dark); }
+.status-chip--Shipped { background: #dce6f2; color: #2c3a4a; }
+.status-chip--Delivered { background: var(--talo-primary); color: #fff; }
+.status-chip--Cancelled { background: #f2dcd8; color: var(--talo-accent-dark); }
+
+.shop__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+}
+
+.shop__table th,
+.shop__table td {
+  text-align: left;
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--talo-border);
+  white-space: nowrap;
+}
+
+.shop__table th {
+  color: var(--talo-muted);
+  font-weight: 600;
+}
+
+.shop__scroll {
+  overflow-x: auto;
+}
+
+/* ── Вітрини: кімнати та колекції ── */
+.showcase-grid {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.showcase-card {
+  display: block;
+  background: var(--talo-surface);
+  border: 1px solid var(--talo-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.showcase-card:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-2px);
+}
+
+.showcase-card__media {
+  aspect-ratio: 4 / 3;
+  background: var(--talo-surface-2);
+  display: grid;
+  place-items: center;
+}
+
+.showcase-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.showcase-card__body {
+  padding: var(--space-4);
+}
+
+.showcase-card__name {
+  font-size: var(--fs-h3);
+  margin: 0 0 var(--space-2);
+}
+
+.showcase-card__desc {
+  color: var(--talo-muted);
+  font-size: var(--fs-sm);
+  margin: 0;
+}
+
+.shop__form {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.shop__form label {
+  display: grid;
+  gap: var(--space-2);
+  font-size: var(--fs-sm);
+  color: var(--talo-muted);
+}
+
+.shop__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}

@@ -2,14 +2,17 @@
 // Головна за макетом TALO: hero, пошук по кімнатах, блоки товарів
 // (новинки / завжди низька ціна / чудові пропозиції) та банери акцій.
 //   GET /products/homepage -> { newArrivals, onSale, recommended }
-//   GET /categories        -> картки в «Пошук по кімнатах»
+//   GET /rooms             -> картки в «Пошук по кімнатах»
+//   GET /categories        -> запасний варіант, поки кімнати не заведені
 
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import useProductStore from "../stores/productStore";
 import useCategoryStore from "../stores/categoryStore";
+import { useRoomStore } from "../stores/showcaseStore";
 import SectionHeader from "../components/SectionHeader";
 import ProductCarousel from "../components/ProductCarousel";
+import RemoteImage from "../components/RemoteImage";
 import { ChevronRight } from "../components/icons";
 import heroImage from "../assets/hero.png";
 import "./HomePage.css";
@@ -34,7 +37,9 @@ const PROMOS = [
     title: "На все для саду та відпочинку",
     text: "Меблі, текстиль та декор для тераси",
     cta: "До акцій",
-    to: "/catalog?categoryName=Для саду",
+    // Раніше тут стояв ?categoryName=… — бекенд такого фільтра не має,
+    // тож посилання мовчки відкривало весь каталог.
+    to: "/catalog?isNew=1",
     image:
       "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=900&q=80",
     tone: "green",
@@ -55,13 +60,23 @@ const PROMOS = [
 const HomePage = () => {
   const { homepage, isHomeLoading, fetchHomepage } = useProductStore();
   const { categories, fetchCategories } = useCategoryStore();
+  const { items: roomItems, fetchAll: fetchRooms } = useRoomStore();
 
   useEffect(() => {
     fetchHomepage();
     fetchCategories();
-  }, [fetchHomepage, fetchCategories]);
+    fetchRooms();
+  }, [fetchHomepage, fetchCategories, fetchRooms]);
 
-  const rooms = categories.filter((c) => !c.parentCategoryId).slice(0, 8);
+  // Кімнати — окремий ресурс, але поки їх не завели, показуємо кореневі
+  // категорії: порожній блок на головній виглядав би як помилка.
+  const rooms =
+    roomItems.length > 0
+      ? roomItems.slice(0, 8).map((r) => ({ id: r.id, name: r.name, imageUrl: r.coverImageUrl, to: `/rooms/${r.id}` }))
+      : categories
+          .filter((c) => !c.parentCategoryId)
+          .slice(0, 8)
+          .map((c) => ({ id: c.id, name: c.name, imageUrl: c.imageUrl, to: `/catalog?categoryId=${c.id}` }));
 
   return (
     <div className="home">
@@ -89,17 +104,17 @@ const HomePage = () => {
       {/* ─── Пошук по кімнатах ─── */}
       {rooms.length > 0 && (
         <section className="container section">
-          <SectionHeader title="Пошук по кімнатах" linkTo="/categories" withDots={false} />
+          <SectionHeader title="Пошук по кімнатах" linkTo="/rooms" withDots={false} />
           <ul className="rooms">
             {rooms.map((c) => (
               <li key={c.id} className="rooms__item">
-                <Link to={`/catalog?categoryId=${c.id}`} className="room">
+                <Link to={c.to} className="room">
                   <span className="room__media">
-                    {c.imageUrl ? (
-                      <img src={c.imageUrl} alt="" loading="lazy" />
-                    ) : (
-                      <span className="room__initial">{c.name.charAt(0)}</span>
-                    )}
+                    <RemoteImage
+                      src={c.imageUrl}
+                      placeholderClassName="room__initial"
+                      placeholder={c.name.charAt(0)}
+                    />
                   </span>
                   <span className="room__name">{c.name}</span>
                 </Link>
@@ -132,7 +147,7 @@ const HomePage = () => {
         <ul className="promos">
           {PROMOS.map((p) => (
             <li key={p.id} className={`promo promo--${p.tone}`}>
-              <img className="promo__image" src={p.image} alt="" loading="lazy" />
+              <RemoteImage className="promo__image" src={p.image} />
               <div className="promo__content">
                 <p className="promo__eyebrow">{p.eyebrow}</p>
                 <h3 className="promo__title">{p.title}</h3>

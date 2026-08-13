@@ -3,6 +3,7 @@
 // images: [{ id, imageUrl, isMain }]
 
 import { useState } from "react";
+import RemoteImage from "./RemoteImage";
 import "./ProductGallery.css";
 
 const ProductGallery = ({ images = [], name }) => {
@@ -24,7 +25,12 @@ const ProductGallery = ({ images = [], name }) => {
   return (
     <div className="gallery">
       <div className="gallery__main">
-        <img src={current.imageUrl} alt={name} />
+        <RemoteImage
+          src={current.imageUrl}
+          alt={name}
+          loading="eager"
+          placeholderClassName="gallery__placeholder"
+        />
       </div>
 
       {ordered.length > 1 && (
@@ -38,7 +44,7 @@ const ProductGallery = ({ images = [], name }) => {
                 aria-label={`Фото ${i + 1}`}
                 aria-pressed={i === active}
               >
-                <img src={img.imageUrl} alt="" loading="lazy" />
+                <RemoteImage src={img.imageUrl} placeholderClassName="gallery__placeholder" />
               </button>
             </li>
           ))}

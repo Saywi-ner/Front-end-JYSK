@@ -16,6 +16,25 @@ export const discountPercent = (price, oldPrice) => {
   return "-" + Math.round((1 - price / oldPrice) * 100) + "%";
 };
 
-// Універсальний доступ до головного фото (бек віддає mainImageUrl або imageUrl).
-export const productImage = (product) =>
-  product?.mainImageUrl || product?.imageUrl || null;
+// Універсальний доступ до головного фото. Бек віддає mainImageUrl у списках,
+// images[] у деталці, а для товару без фото — нічого: тоді картка показує
+// власний плейсхолдер замість «битої» картинки.
+export const productImage = (product) => {
+  const url =
+    product?.mainImageUrl ||
+    product?.imageUrl ||
+    product?.images?.find((i) => i.isMain)?.imageUrl ||
+    product?.images?.[0]?.imageUrl ||
+    null;
+
+  if (!url) return null;
+  // Старий сід записував рядок-заглушку у поле URL.
+  return url === "placeholder.jpg" ? null : url;
+};
+
+// Дата у вигляді «11.08.2026». Некоректну дату не показуємо зовсім.
+export const formatDate = (value) => {
+  if (!value) return "";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? "" : date.toLocaleDateString("uk-UA");
+};
