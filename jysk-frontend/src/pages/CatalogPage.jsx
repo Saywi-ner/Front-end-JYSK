@@ -1,7 +1,6 @@
 // src/pages/CatalogPage.jsx
 // Каталог / результати пошуку: фільтри + сітка + пагінація.
 // Фільтри й номер сторінки синхронізовані з URL
-// (?search=&categoryId=&onSale=&isNew=&sort=&page=).
 // Усі запити — через методи сторів, не напряму axios.
 
 import { useEffect, useMemo, useState } from "react";

@@ -122,6 +122,101 @@
   color: var(--talo-muted);
 }
 
+.admin__head-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+/* ── Форма створення / редагування ── */
+.admin-form {
+  margin-bottom: var(--space-5);
+  padding: var(--space-5);
+  background: var(--talo-surface);
+  border: 1px solid var(--talo-border-strong);
+  border-radius: var(--radius);
+}
+
+.admin-form__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  font-weight: 700;
+  margin-bottom: var(--space-4);
+}
+
+.admin-form__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+.admin-form__field {
+  display: grid;
+  gap: var(--space-2);
+  font-size: var(--fs-sm);
+  color: var(--talo-muted);
+}
+
+.admin-form__checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  margin-top: var(--space-4);
+}
+
+.admin-form__check {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-sm);
+}
+
+.admin-form__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+}
+
+@media (min-width: 720px) {
+  .admin-form__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .admin-form__field--wide {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ── Дії в рядку таблиці ── */
+.admin-table__actions {
+  display: flex;
+  gap: var(--space-2);
+  white-space: nowrap;
+}
+
+.admin-action {
+  padding: 0.35rem 0.75rem;
+  border: 1px solid var(--talo-border-strong);
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--talo-ink);
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+.admin-action:hover {
+  border-color: var(--talo-primary);
+  color: var(--talo-primary);
+}
+
+.admin-action--danger {
+  color: var(--talo-price);
+}
+.admin-action--danger:hover {
+  background: var(--talo-danger-soft);
+  border-color: var(--talo-price);
+  color: var(--talo-price);
+}
+
 /* ── Таблиці ── */
 .admin__table-wrap {
   /* Широка таблиця гортається всередині себе, а не розсуває сторінку. */
