@@ -11,7 +11,7 @@ import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import useAuthStore from "../stores/authStore";
 import useCartStore from "../stores/cartStore";
 import useWishlistStore from "../stores/wishlistStore";
-import { SearchIcon, HeartIcon, CartIcon, UserIcon, MenuIcon, CloseIcon } from "./icons";
+import { SearchIcon, HeartIcon, CartIcon, UserIcon, MenuIcon, CloseIcon, FilterIcon } from "./icons";
 import "./Header.css";
 
 const NAV = [
@@ -39,6 +39,8 @@ const Header = () => {
   const { customer } = useAuthStore();
   const cartCount = useCartStore((s) => s.items.reduce((sum, i) => sum + i.quantity, 0));
   const wishCount = useWishlistStore((s) => s.items.length);
+  // Без цього посилання в адмінку можна було потрапити лише вручну за адресою.
+  const isAdmin = customer?.role === "Admin";
 
   const [query, setQuery] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
@@ -94,6 +96,11 @@ const Header = () => {
                 {item.label}
               </NavLink>
             ))}
+            {isAdmin && (
+              <NavLink to="/admin" className="header__nav-link header__nav-link--admin">
+                Адмінка
+              </NavLink>
+            )}
           </nav>
 
           <form className="header__search" role="search" onSubmit={submitSearch}>
@@ -179,6 +186,12 @@ const Header = () => {
               <HeartIcon width={20} height={20} />
               Обране{wishCount > 0 ? ` (${wishCount})` : ""}
             </Link>
+            {isAdmin && (
+              <Link to="/admin" className="header__drawer-link" onClick={closeMenu}>
+                <FilterIcon width={20} height={20} />
+                Адмінка
+              </Link>
+            )}
           </nav>
         </>
       )}

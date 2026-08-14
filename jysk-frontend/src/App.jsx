@@ -15,6 +15,11 @@ import CheckoutPage from "./pages/CheckoutPage";
 import OrdersPage from "./pages/OrdersPage";
 import OrderDetailPage from "./pages/OrderDetailPage";
 import AdminOrdersPage from "./pages/AdminOrdersPage";
+import AdminLayout from "./pages/admin/AdminLayout";
+import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
+import AdminProductsPage from "./pages/admin/AdminProductsPage";
+import AdminCategoriesPage from "./pages/admin/AdminCategoriesPage";
+import AdminCustomersPage from "./pages/admin/AdminCustomersPage";
 import WishlistPage from "./pages/WishlistPage";
 import { RoomsPage, RoomDetailPage, CollectionsPage, CollectionDetailPage } from "./pages/ShowcasePages";
 import InfoPage from "./pages/InfoPage";
@@ -50,8 +55,16 @@ function App() {
             <Route path="/orders/:id" element={<OrderDetailPage />} />
           </Route>
 
+          {/* Адмінка: спільний каркас із бічним меню, розділи — вкладені
+              маршрути. Замовлення лишаються за тією ж адресою, що й раніше. */}
           <Route element={<RequireAuth adminOnly />}>
-            <Route path="/admin/orders" element={<AdminOrdersPage />} />
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<AdminDashboardPage />} />
+              <Route path="products" element={<AdminProductsPage />} />
+              <Route path="categories" element={<AdminCategoriesPage />} />
+              <Route path="orders" element={<AdminOrdersPage />} />
+              <Route path="customers" element={<AdminCustomersPage />} />
+            </Route>
           </Route>
 
           {/* Інформаційні сторінки будуються зі списку контенту —

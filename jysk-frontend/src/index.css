@@ -68,6 +68,7 @@
   --talo-accent-dark: #a4472c;
 
   --talo-price: #c8322b;        /* червоний — актуальна ціна */
+  --talo-danger-soft: #fbeae9;  /* підкладка дій видалення */
   --talo-navy: #2c3a4a;         /* темні бейджі (NEW) */
   --talo-star: #e0a32e;         /* рейтинг */
 

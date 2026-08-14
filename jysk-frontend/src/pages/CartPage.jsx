@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import useCartStore from "../stores/cartStore";
 import useAuthStore from "../stores/authStore";
 import RemoteImage from "../components/RemoteImage";
+import { TrashIcon } from "../components/icons";
 import { formatPrice } from "../utils/format";
 import "./ShopPages.css";
 
@@ -45,8 +46,14 @@ const CartLine = ({ line }) => {
             </button>
           </div>
 
-          <button type="button" className="cart-line__remove" onClick={() => remove(line.key)}>
-            Прибрати
+          <button
+            type="button"
+            className="cart-line__remove"
+            onClick={() => remove(line.key)}
+            aria-label={`Прибрати «${line.name}» з кошика`}
+            title="Прибрати з кошика"
+          >
+            <TrashIcon width={18} height={18} />
           </button>
         </div>
       </div>
@@ -109,7 +116,7 @@ const CartPage = () => {
               <button type="button" className="btn btn--primary btn--block" onClick={goToCheckout}>
                 Оформити замовлення
               </button>
-              <button type="button" className="cart-line__remove" onClick={clear}>
+              <button type="button" className="shop__clear" onClick={clear}>
                 Очистити кошик
               </button>
             </div>

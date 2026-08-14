@@ -1,0 +1,228 @@
+/* Адмінка: каркас із бічним меню та таблицями розділів. */
+
+.admin {
+  padding-block: var(--space-5) var(--space-8);
+}
+
+.admin__head {
+  margin-bottom: var(--space-6);
+}
+
+.admin__title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--fs-h1);
+}
+
+.admin__subtitle {
+  margin-top: var(--space-2);
+  color: var(--talo-muted);
+}
+
+.admin__layout {
+  display: grid;
+  gap: var(--space-5);
+  align-items: start;
+}
+
+/* ── Меню розділів ── */
+.admin__nav {
+  display: flex;
+  gap: var(--space-2);
+  overflow-x: auto;
+  padding-bottom: var(--space-2);
+  scrollbar-width: none;
+}
+.admin__nav::-webkit-scrollbar {
+  display: none;
+}
+
+.admin__nav-link {
+  flex: none;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-pill);
+  background: var(--talo-surface);
+  border: 1px solid var(--talo-border);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--talo-ink);
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.admin__nav-link:hover {
+  border-color: var(--talo-primary);
+}
+.admin__nav-link--active {
+  background: var(--talo-primary);
+  border-color: var(--talo-primary);
+  color: #fff;
+}
+
+/* ── Вміст ── */
+.admin__section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.admin__section-title {
+  font-family: var(--font-display);
+  font-size: var(--fs-h2);
+  font-weight: 700;
+}
+
+.admin__count,
+.admin__muted {
+  color: var(--talo-muted);
+  font-size: var(--fs-sm);
+}
+
+.admin__error {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-sm);
+  background: var(--talo-danger-soft);
+  color: var(--talo-price);
+  font-size: var(--fs-sm);
+}
+
+/* ── Плитки огляду ── */
+.admin-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.admin-tile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-5);
+  background: var(--talo-surface);
+  border: 1px solid var(--talo-border);
+  border-radius: var(--radius);
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+.admin-tile:hover {
+  border-color: var(--talo-primary);
+  transform: translateY(-2px);
+}
+
+.admin-tile__value {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.admin-tile__label {
+  font-size: var(--fs-sm);
+  color: var(--talo-muted);
+}
+
+/* ── Таблиці ── */
+.admin__table-wrap {
+  /* Широка таблиця гортається всередині себе, а не розсуває сторінку. */
+  overflow-x: auto;
+  background: var(--talo-surface);
+  border: 1px solid var(--talo-border);
+  border-radius: var(--radius);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+}
+
+.admin-table th,
+.admin-table td {
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  border-bottom: 1px solid var(--talo-border);
+  white-space: nowrap;
+}
+
+.admin-table th {
+  color: var(--talo-muted);
+  font-weight: 600;
+}
+
+.admin-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.admin-table a:hover {
+  color: var(--talo-primary);
+}
+
+.admin-table__mono {
+  font-variant-numeric: tabular-nums;
+  color: var(--talo-muted);
+}
+
+.admin-table__muted {
+  color: var(--talo-muted);
+  white-space: normal;
+}
+
+/* ── Пагінація ── */
+.admin__pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-top: var(--space-5);
+  font-size: var(--fs-sm);
+  color: var(--talo-muted);
+}
+
+.admin__pager button {
+  padding: 0.45rem 1rem;
+  border: 1.5px solid var(--talo-border-strong);
+  border-radius: var(--radius-pill);
+  font-weight: 600;
+  color: var(--talo-ink);
+}
+.admin__pager button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Заглушка для розділів без бекенда ── */
+.admin__note {
+  padding: var(--space-5);
+  background: var(--talo-primary-soft);
+  border-radius: var(--radius);
+}
+
+.admin__note-title {
+  font-family: var(--font-display);
+  font-size: var(--fs-h3);
+  font-weight: 700;
+  margin-bottom: var(--space-2);
+}
+
+.admin__note code {
+  padding: 0.1rem 0.35rem;
+  border-radius: var(--radius-sm);
+  background: var(--talo-surface);
+  font-size: 0.9em;
+}
+
+@media (min-width: 900px) {
+  .admin__layout {
+    grid-template-columns: 220px 1fr;
+  }
+  .admin__nav {
+    flex-direction: column;
+    overflow: visible;
+    position: sticky;
+    top: calc(var(--header-h) + var(--space-4));
+  }
+  .admin__nav-link {
+    text-align: left;
+  }
+}
