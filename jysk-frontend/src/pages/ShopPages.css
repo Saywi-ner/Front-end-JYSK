@@ -310,8 +310,16 @@
   margin: 0;
 }
 
+/* Картки в ряду тягнуться на однакову висоту, інакше сусідня з коротшим
+   описом обривається вище й ряд виглядає нерівним. */
+.showcase-grid > li {
+  display: flex;
+}
+
 .showcase-card {
-  display: block;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   background: var(--talo-surface);
   border: 1px solid var(--talo-border);
   border-radius: var(--radius-lg);
@@ -324,32 +332,60 @@
   transform: translateY(-2px);
 }
 
+/* Обкладинка тримає пропорцію 4:3 незалежно від того, портретне фото
+   чи альбомне: зображення позиціюється абсолютно, тож його власний розмір
+   не може розтягнути картку. Інакше сусідні картки в ряду мали різну висоту. */
 .showcase-card__media {
+  position: relative;
+  display: block;
   aspect-ratio: 4 / 3;
+  overflow: hidden;
   background: var(--talo-surface-2);
-  display: grid;
-  place-items: center;
+}
+
+.showcase-card__media img,
+.showcase-card__media > span {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .showcase-card__media img {
-  width: 100%;
-  height: 100%;
   object-fit: cover;
 }
 
+/* Текстовий плейсхолдер, коли фото не завантажилось. */
+.showcase-card__media > span {
+  display: grid;
+  place-items: center;
+  color: var(--talo-faint);
+  font-weight: 800;
+  letter-spacing: 0.2em;
+}
+
 .showcase-card__body {
+  /* Картка зібрана зі span-ів усередині посилання, тому розкладку задаємо
+     явно: інакше назва й опис злипались в один рядок і вилазили за картку. */
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
   padding: var(--space-4);
 }
 
 .showcase-card__name {
+  display: block;
+  font-family: var(--font-display);
   font-size: var(--fs-h3);
-  margin: 0 0 var(--space-2);
+  font-weight: 700;
+  line-height: 1.25;
 }
 
 .showcase-card__desc {
+  display: block;
   color: var(--talo-muted);
   font-size: var(--fs-sm);
-  margin: 0;
+  line-height: 1.45;
 }
 
 .shop__form {
