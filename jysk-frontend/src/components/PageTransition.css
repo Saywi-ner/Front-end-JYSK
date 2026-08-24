@@ -1,6 +1,5 @@
-/* Перехід між сторінками: вибілення + гілки з листям.
-   Уся анімація одноразова (forwards не потрібен — вузол знімається наступним
-   переходом), тривалість ~820 мс: помітно, але не змушує чекати. */
+/* Перехід між сторінками: вибілення + гілки з листям із чотирьох кутів.
+   Тривалість ~880 мс: помітно, але не змушує чекати. */
 
 .page-transition {
   position: fixed;
@@ -16,76 +15,123 @@
 .page-transition__veil {
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(120% 80% at 50% 40%, #fff 0%, var(--talo-bg) 70%);
+  background: radial-gradient(120% 80% at 50% 40%, #fff 0%, var(--talo-bg) 70%);
   opacity: 0;
-  animation: veil-sweep 820ms ease-in-out;
+  animation: veil-sweep 880ms ease-in-out;
 }
 
 @keyframes veil-sweep {
   0%   { opacity: 0; }
-  28%  { opacity: 0.97; }
-  58%  { opacity: 0.97; }
+  26%  { opacity: 0.97; }
+  60%  { opacity: 0.97; }
   100% { opacity: 0; }
 }
 
 /* ── Гілки ──
-   Заходять із кутів, злегка похитуються й ідуть назад. transform-origin —
-   у самому куті, тому рух читається як гойдання гілки, а не зсув картинки. */
-.page-transition__branch {
+   Кожна заходить зі свого кута й похитується. Розмір, затримка та амплітуда
+   різні: синхронний рух чотирьох однакових гілок виглядав би механічно. */
+.pt-branch {
   position: absolute;
-  width: clamp(200px, 28vw, 360px);
+  opacity: 0;
+  animation: branch-in 880ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+.pt-branch__art {
+  width: 100%;
   height: auto;
   color: var(--talo-primary);
-  opacity: 0;
 }
 
-.page-transition__branch--tl {
-  top: -8px;
-  left: -8px;
+/* Один набір кадрів на всі гілки: напрямок заходу й нахил задаються
+   змінними, тож кути відрізняються без чотирьох копій анімації. */
+@keyframes branch-in {
+  0% {
+    opacity: 0;
+    transform: translate(var(--pt-from-x), var(--pt-from-y)) rotate(var(--pt-tilt));
+  }
+  30%  { opacity: 0.92; transform: translate(0, 0) rotate(0deg); }
+  48%  { opacity: 0.92; transform: translate(0, 0) rotate(var(--pt-sway)); }
+  64%  { opacity: 0.92; transform: translate(0, 0) rotate(calc(var(--pt-sway) * -0.55)); }
+  78%  { opacity: 0.8;  transform: translate(0, 0) rotate(calc(var(--pt-sway) * 0.25)); }
+  100% {
+    opacity: 0;
+    transform: translate(calc(var(--pt-from-x) * 0.8), calc(var(--pt-from-y) * 0.8))
+               rotate(var(--pt-tilt));
+  }
+}
+
+.pt-branch--tl {
+  top: -10px;
+  left: -10px;
+  width: clamp(240px, 34vw, 460px);
   transform-origin: top left;
-  animation: branch-tl 820ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  --pt-from-x: -26%;
+  --pt-from-y: -24%;
+  --pt-tilt: -13deg;
+  --pt-sway: 2.6deg;
+  animation-delay: 0ms;
 }
 
-.page-transition__branch--br {
-  right: -8px;
-  bottom: -8px;
-  /* Той самий шлях, розвернутий на 180° — друга гілка «росте» з іншого кута. */
+.pt-branch--tr {
+  top: -10px;
+  right: -10px;
+  width: clamp(190px, 26vw, 350px);
+  transform-origin: top right;
+  --pt-from-x: 24%;
+  --pt-from-y: -28%;
+  --pt-tilt: 11deg;
+  --pt-sway: -3.2deg;
+  animation-delay: 90ms;
+}
+.pt-branch--tr .pt-branch__art {
+  transform: scaleX(-1);
+}
+
+.pt-branch--bl {
+  bottom: -10px;
+  left: -10px;
+  width: clamp(210px, 30vw, 400px);
+  transform-origin: bottom left;
+  --pt-from-x: -22%;
+  --pt-from-y: 26%;
+  --pt-tilt: 9deg;
+  --pt-sway: -2.2deg;
+  animation-delay: 50ms;
+}
+.pt-branch--bl .pt-branch__art {
+  transform: scaleY(-1);
+}
+
+.pt-branch--br {
+  right: -10px;
+  bottom: -10px;
+  width: clamp(260px, 37vw, 500px);
   transform-origin: bottom right;
-  rotate: 180deg;
-  animation: branch-br 820ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  --pt-from-x: 26%;
+  --pt-from-y: 24%;
+  --pt-tilt: -10deg;
+  --pt-sway: 2.9deg;
+  animation-delay: 130ms;
 }
-
-@keyframes branch-tl {
-  0%   { opacity: 0; transform: translate(-26%, -26%) rotate(-14deg); }
-  32%  { opacity: 0.9; transform: translate(0, 0) rotate(0deg); }
-  50%  { opacity: 0.9; transform: translate(0, 0) rotate(2.5deg); }
-  66%  { opacity: 0.9; transform: translate(0, 0) rotate(-1.5deg); }
-  100% { opacity: 0; transform: translate(-20%, -20%) rotate(-10deg); }
-}
-
-@keyframes branch-br {
-  0%   { opacity: 0; transform: translate(26%, 26%) rotate(-14deg); }
-  32%  { opacity: 0.9; transform: translate(0, 0) rotate(0deg); }
-  50%  { opacity: 0.9; transform: translate(0, 0) rotate(2.5deg); }
-  66%  { opacity: 0.9; transform: translate(0, 0) rotate(-1.5deg); }
-  100% { opacity: 0; transform: translate(20%, 20%) rotate(-10deg); }
+.pt-branch--br .pt-branch__art {
+  transform: scale(-1, -1);
 }
 
 /* Листя проявляється трохи пізніше за стебло — гілка ніби «розпускається». */
-.branch__leaves {
+.pt-branch__leaves {
   opacity: 0;
-  animation: leaves-in 820ms ease-out;
+  animation: leaves-in 880ms ease-out both;
+  animation-delay: inherit;
 }
 
 @keyframes leaves-in {
   0%, 12% { opacity: 0; }
-  36%     { opacity: 1; }
-  70%     { opacity: 1; }
+  38%     { opacity: 1; }
+  72%     { opacity: 1; }
   100%    { opacity: 0; }
 }
 
-/* ── Кілька листочків, що пролітають ── */
+/* ── Листочки, що пролітають ── */
 .page-transition__leaf {
   position: absolute;
   width: 16px;
@@ -95,26 +141,18 @@
   opacity: 0;
 }
 
-.page-transition__leaf--a {
-  left: 22%;
-  animation: leaf-drift 820ms ease-in-out 60ms;
-}
-.page-transition__leaf--b {
-  left: 54%;
-  width: 12px;
-  height: 5.5px;
-  animation: leaf-drift 820ms ease-in-out 150ms;
-}
-.page-transition__leaf--c {
-  left: 76%;
-  animation: leaf-drift 820ms ease-in-out 20ms;
-}
+.page-transition__leaf--a { left: 18%; animation: leaf-drift 880ms ease-in-out  60ms both; }
+.page-transition__leaf--b { left: 43%; width: 12px; height: 5.5px;
+                            animation: leaf-drift 880ms ease-in-out 190ms both; }
+.page-transition__leaf--c { left: 67%; animation: leaf-drift 880ms ease-in-out  20ms both; }
+.page-transition__leaf--d { left: 86%; width: 13px; height: 6px;
+                            animation: leaf-drift 880ms ease-in-out 250ms both; }
 
 @keyframes leaf-drift {
-  0%   { opacity: 0; transform: translateY(-14vh) rotate(-20deg); }
+  0%   { opacity: 0; transform: translateY(-16vh) rotate(-20deg); }
   35%  { opacity: 0.85; }
-  70%  { opacity: 0.6; }
-  100% { opacity: 0; transform: translateY(74vh) rotate(190deg); }
+  70%  { opacity: 0.55; }
+  100% { opacity: 0; transform: translateY(78vh) rotate(200deg); }
 }
 
 /* Рух — прикраса, а не спосіб щось повідомити. Якщо людина просила менше
