@@ -1,4 +1,4 @@
-/* Перехід між сторінками: вибілення + гілки з листям із чотирьох кутів.
+/* Перехід між сторінками: вибілення + гілки з листям з бічних країв.
    Тривалість ~880 мс: помітно, але не змушує чекати. */
 
 .page-transition {
@@ -28,8 +28,8 @@
 }
 
 /* ── Гілки ──
-   Кожна заходить зі свого кута й похитується. Розмір, затримка та амплітуда
-   різні: синхронний рух чотирьох однакових гілок виглядав би механічно. */
+   Кожна виїжджає зі свого боку й похитується. Розмір, висота, затримка
+   та амплітуда різні: синхронний рух виглядав би механічно. */
 .pt-branch {
   position: absolute;
   opacity: 0;
@@ -37,84 +37,78 @@
 }
 
 .pt-branch__art {
+  display: block;
   width: 100%;
   height: auto;
   color: var(--talo-primary);
+  /* Стебло намальоване за межами viewBox і обрізається тут — саме через це
+     на краю немає круглого торця. */
+  overflow: hidden;
 }
 
-/* Один набір кадрів на всі гілки: напрямок заходу й нахил задаються
-   змінними, тож кути відрізняються без чотирьох копій анімації. */
+/* Один набір кадрів: напрямок заходу й нахил задаються змінними, тож
+   чотири гілки обходяться без чотирьох копій анімації.
+   Точка обертання — на самому краю екрана, тому основа гілки не
+   «виїжджає» в кадр під час похитування. */
 @keyframes branch-in {
   0% {
     opacity: 0;
-    transform: translate(var(--pt-from-x), var(--pt-from-y)) rotate(var(--pt-tilt));
+    transform: translateX(var(--pt-from-x)) rotate(var(--pt-tilt));
   }
-  30%  { opacity: 0.92; transform: translate(0, 0) rotate(0deg); }
-  48%  { opacity: 0.92; transform: translate(0, 0) rotate(var(--pt-sway)); }
-  64%  { opacity: 0.92; transform: translate(0, 0) rotate(calc(var(--pt-sway) * -0.55)); }
-  78%  { opacity: 0.8;  transform: translate(0, 0) rotate(calc(var(--pt-sway) * 0.25)); }
+  30%  { opacity: 0.92; transform: translateX(0) rotate(0deg); }
+  48%  { opacity: 0.92; transform: translateX(0) rotate(var(--pt-sway)); }
+  64%  { opacity: 0.92; transform: translateX(0) rotate(calc(var(--pt-sway) * -0.5)); }
+  78%  { opacity: 0.8;  transform: translateX(0) rotate(calc(var(--pt-sway) * 0.22)); }
   100% {
     opacity: 0;
-    transform: translate(calc(var(--pt-from-x) * 0.8), calc(var(--pt-from-y) * 0.8))
-               rotate(var(--pt-tilt));
+    transform: translateX(var(--pt-from-x)) rotate(var(--pt-tilt));
   }
 }
 
-.pt-branch--tl {
-  top: -10px;
-  left: -10px;
-  width: clamp(240px, 34vw, 460px);
-  transform-origin: top left;
-  --pt-from-x: -26%;
-  --pt-from-y: -24%;
-  --pt-tilt: -13deg;
-  --pt-sway: 2.6deg;
+/* ── Лівий край ── */
+.pt-branch--l-top {
+  top: 7%;
+  left: 0;
+  width: clamp(220px, 30vw, 420px);
+  transform-origin: left center;
+  --pt-from-x: -22%;
+  --pt-tilt: -7deg;
+  --pt-sway: 2.4deg;
   animation-delay: 0ms;
 }
 
-.pt-branch--tr {
-  top: -10px;
-  right: -10px;
-  width: clamp(190px, 26vw, 350px);
-  transform-origin: top right;
+.pt-branch--l-bottom {
+  bottom: 9%;
+  left: 0;
+  width: clamp(185px, 25vw, 350px);
+  transform-origin: left center;
+  --pt-from-x: -26%;
+  --pt-tilt: 6deg;
+  --pt-sway: -2deg;
+  animation-delay: 110ms;
+}
+
+/* ── Правий край ── */
+.pt-branch--r-top {
+  top: 15%;
+  right: 0;
+  width: clamp(240px, 33vw, 450px);
+  transform-origin: right center;
   --pt-from-x: 24%;
-  --pt-from-y: -28%;
-  --pt-tilt: 11deg;
-  --pt-sway: -3.2deg;
-  animation-delay: 90ms;
-}
-.pt-branch--tr .pt-branch__art {
-  transform: scaleX(-1);
+  --pt-tilt: 6deg;
+  --pt-sway: -2.8deg;
+  animation-delay: 55ms;
 }
 
-.pt-branch--bl {
-  bottom: -10px;
-  left: -10px;
-  width: clamp(210px, 30vw, 400px);
-  transform-origin: bottom left;
-  --pt-from-x: -22%;
-  --pt-from-y: 26%;
-  --pt-tilt: 9deg;
-  --pt-sway: -2.2deg;
-  animation-delay: 50ms;
-}
-.pt-branch--bl .pt-branch__art {
-  transform: scaleY(-1);
-}
-
-.pt-branch--br {
-  right: -10px;
-  bottom: -10px;
-  width: clamp(260px, 37vw, 500px);
-  transform-origin: bottom right;
-  --pt-from-x: 26%;
-  --pt-from-y: 24%;
-  --pt-tilt: -10deg;
-  --pt-sway: 2.9deg;
-  animation-delay: 130ms;
-}
-.pt-branch--br .pt-branch__art {
-  transform: scale(-1, -1);
+.pt-branch--r-bottom {
+  right: 0;
+  bottom: 5%;
+  width: clamp(200px, 27vw, 380px);
+  transform-origin: right center;
+  --pt-from-x: 28%;
+  --pt-tilt: -8deg;
+  --pt-sway: 2.2deg;
+  animation-delay: 150ms;
 }
 
 /* Листя проявляється трохи пізніше за стебло — гілка ніби «розпускається». */
@@ -141,11 +135,11 @@
   opacity: 0;
 }
 
-.page-transition__leaf--a { left: 18%; animation: leaf-drift 880ms ease-in-out  60ms both; }
-.page-transition__leaf--b { left: 43%; width: 12px; height: 5.5px;
+.page-transition__leaf--a { left: 22%; animation: leaf-drift 880ms ease-in-out  60ms both; }
+.page-transition__leaf--b { left: 45%; width: 12px; height: 5.5px;
                             animation: leaf-drift 880ms ease-in-out 190ms both; }
-.page-transition__leaf--c { left: 67%; animation: leaf-drift 880ms ease-in-out  20ms both; }
-.page-transition__leaf--d { left: 86%; width: 13px; height: 6px;
+.page-transition__leaf--c { left: 63%; animation: leaf-drift 880ms ease-in-out  20ms both; }
+.page-transition__leaf--d { left: 80%; width: 13px; height: 6px;
                             animation: leaf-drift 880ms ease-in-out 250ms both; }
 
 @keyframes leaf-drift {

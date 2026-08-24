@@ -1,5 +1,5 @@
 // src/components/PageTransition.jsx
-// Перехід між сторінками: екран м'яко вибілюється, з чотирьох кутів у кадр
+// Перехід між сторінками: екран м'яко вибілюється, з бічних країв у кадр
 // заходять гілки з листям і легенько похитуються, далі вибілення сходить
 // і відкриває нову сторінку.
 //
@@ -11,55 +11,51 @@ import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import "./PageTransition.css";
 
-// Чотири різні гілки — не одна форма в дзеркальних копіях. Дзеркалення саме
-// по собі впадає в око: однакові вигини в протилежних кутах читаються як
-// візерунок, а не як зарості. Тому в кожної свій вигин, довжина й кількість
-// листя, а віддзеркалення лише доводить її до потрібного кута.
+// Чотири різні гілки, по дві на кожен бік. Праві намальовані одразу
+// справа наліво, а не віддзеркалені: дзеркальна копія тієї самої кривої
+// впадає в око — гілки читаються як пара, а не як зарості.
 //
-// leaves: [cx, cy, кут повороту] уздовж стебла.
+// Стебло починається за межами viewBox (x менше 0 або більше 220). SVG
+// обрізає його рівно по краю, тому в кадрі не видно круглого торця —
+// гілка виглядає такою, що продовжується за екран.
 const BRANCHES = {
-  a: {
-    stem: "M2 5C46 26 92 52 132 84c22 18 44 34 66 52",
+  // ── лівий край, стебла ростуть управо ──
+  l1: {
+    stem: "M-34 18C18 25 70 40 118 62c24 11 46 24 66 38",
     leaves: [
-      [36, 12, -34], [58, 44, 26], [88, 50, -30], [110, 86, 24],
-      [140, 96, -28], [164, 124, 22], [186, 132, -26],
+      [12, 24, -30], [46, 35, 24], [80, 49, -28], [112, 61, 26],
+      [142, 77, -26], [168, 93, 22], [190, 109, -24],
     ],
   },
-  b: {
-    stem: "M2 3C34 34 66 66 96 100c14 16 26 30 38 42",
+  l2: {
+    stem: "M-34 122C22 114 74 99 120 78c26-11 50-25 70-40",
     leaves: [
-      [26, 26, -40], [52, 58, 30], [74, 84, -34], [98, 112, 28], [124, 136, -30],
+      [10, 117, 28], [46, 108, -26], [80, 95, 30], [114, 80, -24], [146, 64, 26],
     ],
   },
-  c: {
-    stem: "M2 8C40 22 80 40 116 66c20 15 38 32 54 52",
+  // ── правий край, стебла ростуть уліво ──
+  r1: {
+    stem: "M254 26C202 35 152 52 106 75c-24 12-46 25-66 40",
     leaves: [
-      [34, 14, -28], [66, 34, 24], [96, 58, -32],
-      [122, 80, 26], [146, 104, -28], [170, 126, 24],
+      [230, 32, 30], [196, 43, -26], [160, 56, 28], [124, 70, -24],
+      [94, 84, 26], [66, 99, -28], [44, 113, 24], [26, 126, -26],
     ],
   },
-  d: {
-    stem: "M2 4C52 20 102 42 146 72c26 18 50 38 72 60",
+  r2: {
+    stem: "M254 124C200 115 150 100 104 77c-24-12-44-26-62-42",
     leaves: [
-      [30, 10, -30], [56, 28, 26], [84, 42, -28], [110, 60, 24],
-      [134, 76, -30], [156, 96, 26], [176, 114, -26], [194, 132, 22],
+      [228, 119, -28], [190, 108, 26], [152, 94, -30],
+      [116, 78, 24], [86, 60, -26], [60, 42, 28],
     ],
   },
 };
 
-const Branch = ({ corner, variant }) => {
+const Branch = ({ side, variant }) => {
   const { stem, leaves } = BRANCHES[variant];
   return (
-    // Позиція та рух — на обгортці, дзеркалення — на самій графіці:
-    // інакше flip і анімований transform боролися б за одну властивість.
-    <div className={`pt-branch pt-branch--${corner}`}>
+    <div className={`pt-branch pt-branch--${side}`}>
       <svg className="pt-branch__art" viewBox="0 0 220 150" fill="none" aria-hidden="true">
-        <path
-          d={stem}
-          stroke="currentColor"
-          strokeWidth="2.6"
-          strokeLinecap="round"
-        />
+        <path d={stem} stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" />
         <g className="pt-branch__leaves" fill="currentColor">
           {leaves.map(([cx, cy, angle], i) => (
             <ellipse
@@ -97,10 +93,10 @@ const PageTransition = () => {
     <div className="page-transition" key={run} aria-hidden="true">
       <div className="page-transition__veil" />
 
-      <Branch corner="tl" variant="a" />
-      <Branch corner="tr" variant="b" />
-      <Branch corner="bl" variant="c" />
-      <Branch corner="br" variant="d" />
+      <Branch side="l-top" variant="l1" />
+      <Branch side="l-bottom" variant="l2" />
+      <Branch side="r-top" variant="r1" />
+      <Branch side="r-bottom" variant="r2" />
 
       <span className="page-transition__leaf page-transition__leaf--a" />
       <span className="page-transition__leaf page-transition__leaf--b" />
