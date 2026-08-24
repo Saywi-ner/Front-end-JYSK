@@ -15,21 +15,23 @@ const Logo = ({ className = "" }) => (
 
     <svg
       className="logo__mark"
-      viewBox="0 0 36 40"
+      viewBox="0 0 48 44"
       fill="none"
       stroke="currentColor"
-      strokeWidth="5"
+      strokeWidth="4.6"
       strokeLinecap="round"
       strokeLinejoin="round"
       aria-hidden="true"
       focusable="false"
     >
-      {/* Зовнішній схил даху */}
-      <path d="M2.5 37.5 18 3.5 33.5 37.5" />
+      {/* Зовнішній схил даху. Широкий розліт ніжок і гребінь, піднятий над
+          рядком: у макеті знак ширший за літеру й виступає над прописними,
+          а ніжки стоять на базовій лінії. */}
+      <path d="M3 41 24 3.2 45 41" />
       {/* Внутрішній схил */}
-      <path d="M9.5 37.5 18 19 26.5 37.5" strokeWidth="4.5" />
+      <path d="M12 41 24 19.8 36 41" strokeWidth="4.2" />
       {/* Крапка під гребенем */}
-      <circle cx="18" cy="30" r="2.8" fill="currentColor" stroke="none" />
+      <circle cx="24" cy="32.8" r="2.9" fill="currentColor" stroke="none" />
     </svg>
 
     <span aria-hidden="true">LO</span>
