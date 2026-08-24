@@ -30,8 +30,13 @@ const Logo = ({ className = "" }) => (
       <path d="M3 41 24 3.2 45 41" />
       {/* Внутрішній схил */}
       <path d="M12 41 24 19.8 36 41" strokeWidth="4.2" />
-      {/* Крапка під гребенем */}
-      <circle cx="24" cy="32.8" r="2.9" fill="currentColor" stroke="none" />
+      {/* Перемички знизу: замикають зовнішній і внутрішній схили,
+          через них дах читається суцільним контуром, а не двома «галочками». */}
+      <path d="M3 41H12" strokeWidth="4.2" />
+      <path d="M36 41H45" strokeWidth="4.2" />
+      {/* Крапка під гребенем — трохи ширша за висоту й посаджена ближче
+          до перемичок, як у макеті. */}
+      <ellipse cx="24" cy="34.6" rx="4" ry="3" fill="currentColor" stroke="none" />
     </svg>
 
     <span aria-hidden="true">LO</span>
