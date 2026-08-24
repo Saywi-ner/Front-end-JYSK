@@ -11,10 +11,11 @@
   padding-block: var(--space-7);
 }
 
+/* Накреслення й трекінг лога живуть у Logo.css — тут лише розмір і колір,
+   від них залежить і величина знака-даху. */
 .footer__logo {
+  display: inline-block;
   font-size: 1.5rem;
-  font-weight: 800;
-  letter-spacing: 0.18em;
   color: var(--talo-primary);
 }
 

@@ -2,6 +2,7 @@
 // Підвал сайту: бренд, колонки посилань, контакти, копірайт.
 
 import { Link } from "react-router-dom";
+import Logo from "./Logo";
 import "./Footer.css";
 
 const COLUMNS = [
@@ -39,7 +40,7 @@ const Footer = () => (
   <footer className="footer">
     <div className="container footer__inner">
       <div className="footer__brand">
-        <Link to="/" className="footer__logo">TALO</Link>
+        <Link to="/" className="footer__logo"><Logo /></Link>
         <p className="footer__tagline">Просто для життя, затишку та злагоди.</p>
         <a href="tel:+380660001081" className="footer__phone">+38 (066) 000 10 81</a>
         <p className="footer__hours">Щодня з 9:00 до 20:00</p>

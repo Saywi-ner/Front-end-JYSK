@@ -32,11 +32,11 @@
   color: inherit;
 }
 
+/* Накреслення й трекінг лога живуть у Logo.css — тут лише розмір і колір,
+   від них залежить і величина знака-даху. */
 .header__logo {
-  font-family: var(--font-display);
+  display: inline-flex;
   font-size: 1.6rem;
-  font-weight: 800;
-  letter-spacing: 0.18em;
   color: var(--talo-primary);
 }
 
@@ -176,7 +176,6 @@
 
   .header__logo {
     font-size: 1.25rem;
-    letter-spacing: 0.14em;
     color: #fff;
   }
 

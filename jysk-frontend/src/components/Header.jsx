@@ -11,6 +11,7 @@ import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import useAuthStore from "../stores/authStore";
 import useCartStore from "../stores/cartStore";
 import useWishlistStore from "../stores/wishlistStore";
+import Logo from "./Logo";
 import { SearchIcon, HeartIcon, CartIcon, UserIcon, MenuIcon, CloseIcon, FilterIcon } from "./icons";
 import "./Header.css";
 
@@ -80,7 +81,7 @@ const Header = () => {
           </button>
 
           <Link to="/" className="header__logo" onClick={closeMenu}>
-            TALO
+            <Logo />
           </Link>
 
           <nav className="header__nav">
